@@ -6,19 +6,24 @@ set -e
 LND_RELEASE_TAG=$1
 PROTOC_VERSION=$2
 
+echo LND_RELEASE_TAG ${LND_RELEASE_TAG}
+echo PROTOC_VERSION ${PROTOC_VERSION}
+
 # Sanitize all proto files prior to type generation
 rm -f *.proto
 ts-node scripts/proto-sanitizer.ts "lnd/${LND_RELEASE_TAG}/**/*.proto"
 
 # Copy google definitions
-cp -r google/. lnd/${npm_package_config_lnd_release_tag}/google
+cp -r google/. lnd/${npm_package_config_releasetag}/google
 
-GENERATED_TYPES_DIR=src/types/generated
+GENERATED_TYPES_DIR=./src/types/generated
 if [ -d "$GENERATED_TYPES_DIR" ]
 then
     rm -rf "$GENERATED_TYPES_DIR"
 fi
 mkdir -p "$GENERATED_TYPES_DIR"
+
+echo GENERATED_TYPES_DIR ${GENERATED_TYPES_DIR}
 
 # Download and install protoc
 unameOut="$(uname -s)"
@@ -50,7 +55,7 @@ protoc/bin/protoc \
   --ts_out=$GENERATED_TYPES_DIR \
   google/api/annotations.proto \
   google/api/http.proto \
-  rpc.proto \
+  lightning.proto \
   walletunlocker.proto \
   autopilotrpc/autopilot.proto \
   chainrpc/chainnotifier.proto \
@@ -62,7 +67,7 @@ protoc/bin/protoc \
   wtclientrpc/wtclient.proto
 
 # Cleanup proto directory/files
-rm -rf *.proto protoc lnd/${npm_package_config_lnd_release_tag}/google
+rm -rf *.proto protoc lnd/${npm_package_config_releasetag}/google
 
 # Remove 'List' from all generated Array type names
 ts-node scripts/clean-repeated.ts

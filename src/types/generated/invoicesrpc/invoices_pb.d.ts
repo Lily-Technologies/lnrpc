@@ -2,7 +2,7 @@
 // file: invoicesrpc/invoices.proto
 
 import * as jspb from "google-protobuf";
-import * as rpc_pb from "../rpc_pb";
+import * as lightning_pb from "../lightning_pb";
 
 export class CancelInvoiceMsg extends jspb.Message {
   getPaymentHash(): Uint8Array | string;
@@ -72,9 +72,9 @@ export class AddHoldInvoiceRequest extends jspb.Message {
   setCltvExpiry(value: number): void;
 
   clearRouteHintsList(): void;
-  getRouteHintsList(): Array<rpc_pb.RouteHint>;
-  setRouteHintsList(value: Array<rpc_pb.RouteHint>): void;
-  addRouteHints(value?: rpc_pb.RouteHint, index?: number): rpc_pb.RouteHint;
+  getRouteHintsList(): Array<lightning_pb.RouteHint>;
+  setRouteHintsList(value: Array<lightning_pb.RouteHint>): void;
+  addRouteHints(value?: lightning_pb.RouteHint, index?: number): lightning_pb.RouteHint;
 
   getPrivate(): boolean;
   setPrivate(value: boolean): void;
@@ -99,7 +99,7 @@ export namespace AddHoldInvoiceRequest {
     expiry: number,
     fallbackAddr: string,
     cltvExpiry: number,
-    routeHints: Array<rpc_pb.RouteHint.AsObject>,
+    routeHints: Array<lightning_pb.RouteHint.AsObject>,
     pb_private: boolean,
   }
 }
@@ -107,6 +107,14 @@ export namespace AddHoldInvoiceRequest {
 export class AddHoldInvoiceResp extends jspb.Message {
   getPaymentRequest(): string;
   setPaymentRequest(value: string): void;
+
+  getAddIndex(): number;
+  setAddIndex(value: number): void;
+
+  getPaymentAddr(): Uint8Array | string;
+  getPaymentAddr_asU8(): Uint8Array;
+  getPaymentAddr_asB64(): string;
+  setPaymentAddr(value: Uint8Array | string): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): AddHoldInvoiceResp.AsObject;
@@ -121,6 +129,8 @@ export class AddHoldInvoiceResp extends jspb.Message {
 export namespace AddHoldInvoiceResp {
   export type AsObject = {
     paymentRequest: string,
+    addIndex: number,
+    paymentAddr: Uint8Array | string,
   }
 }
 
@@ -183,4 +193,64 @@ export namespace SubscribeSingleInvoiceRequest {
     rHash: Uint8Array | string,
   }
 }
+
+export class LookupInvoiceMsg extends jspb.Message {
+  hasPaymentHash(): boolean;
+  clearPaymentHash(): void;
+  getPaymentHash(): Uint8Array | string;
+  getPaymentHash_asU8(): Uint8Array;
+  getPaymentHash_asB64(): string;
+  setPaymentHash(value: Uint8Array | string): void;
+
+  hasPaymentAddr(): boolean;
+  clearPaymentAddr(): void;
+  getPaymentAddr(): Uint8Array | string;
+  getPaymentAddr_asU8(): Uint8Array;
+  getPaymentAddr_asB64(): string;
+  setPaymentAddr(value: Uint8Array | string): void;
+
+  hasSetId(): boolean;
+  clearSetId(): void;
+  getSetId(): Uint8Array | string;
+  getSetId_asU8(): Uint8Array;
+  getSetId_asB64(): string;
+  setSetId(value: Uint8Array | string): void;
+
+  getLookupModifier(): LookupModifierMap[keyof LookupModifierMap];
+  setLookupModifier(value: LookupModifierMap[keyof LookupModifierMap]): void;
+
+  getInvoiceRefCase(): LookupInvoiceMsg.InvoiceRefCase;
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): LookupInvoiceMsg.AsObject;
+  static toObject(includeInstance: boolean, msg: LookupInvoiceMsg): LookupInvoiceMsg.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: LookupInvoiceMsg, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): LookupInvoiceMsg;
+  static deserializeBinaryFromReader(message: LookupInvoiceMsg, reader: jspb.BinaryReader): LookupInvoiceMsg;
+}
+
+export namespace LookupInvoiceMsg {
+  export type AsObject = {
+    paymentHash: Uint8Array | string,
+    paymentAddr: Uint8Array | string,
+    setId: Uint8Array | string,
+    lookupModifier: LookupModifierMap[keyof LookupModifierMap],
+  }
+
+  export enum InvoiceRefCase {
+    INVOICE_REF_NOT_SET = 0,
+    PAYMENT_HASH = 1,
+    PAYMENT_ADDR = 2,
+    SET_ID = 3,
+  }
+}
+
+export interface LookupModifierMap {
+  DEFAULT: 0;
+  HTLC_SET_ONLY: 1;
+  HTLC_SET_BLANK: 2;
+}
+
+export const LookupModifier: LookupModifierMap;
 

@@ -250,6 +250,12 @@ export class SignMessageReq extends jspb.Message {
   getKeyLoc(): KeyLocator | undefined;
   setKeyLoc(value?: KeyLocator): void;
 
+  getDoubleHash(): boolean;
+  setDoubleHash(value: boolean): void;
+
+  getCompactSig(): boolean;
+  setCompactSig(value: boolean): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SignMessageReq.AsObject;
   static toObject(includeInstance: boolean, msg: SignMessageReq): SignMessageReq.AsObject;
@@ -264,6 +270,8 @@ export namespace SignMessageReq {
   export type AsObject = {
     msg: Uint8Array | string,
     keyLoc?: KeyLocator.AsObject,
+    doubleHash: boolean,
+    compactSig: boolean,
   }
 }
 
@@ -354,6 +362,11 @@ export class SharedKeyRequest extends jspb.Message {
   getKeyLoc(): KeyLocator | undefined;
   setKeyLoc(value?: KeyLocator): void;
 
+  hasKeyDesc(): boolean;
+  clearKeyDesc(): void;
+  getKeyDesc(): KeyDescriptor | undefined;
+  setKeyDesc(value?: KeyDescriptor): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SharedKeyRequest.AsObject;
   static toObject(includeInstance: boolean, msg: SharedKeyRequest): SharedKeyRequest.AsObject;
@@ -368,6 +381,7 @@ export namespace SharedKeyRequest {
   export type AsObject = {
     ephemeralPubkey: Uint8Array | string,
     keyLoc?: KeyLocator.AsObject,
+    keyDesc?: KeyDescriptor.AsObject,
   }
 }
 

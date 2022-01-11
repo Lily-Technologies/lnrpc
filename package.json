@@ -1,20 +1,20 @@
 {
-  "name": "@radar/lnrpc",
-  "version": "v0.11.1-beta.1",
+  "name": "@lily/lnrpc",
+  "version": "v0.14.1-beta",
   "description": "A Typescript gRPC client for LND with support for all LND sub-servers",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "config": {
-    "lnd-release-tag": "v0.11.1-beta",
-    "lnd-url": "https://raw.githubusercontent.com/lightningnetwork/lnd",
-    "protoc-version": "3.5.1"
+    "releasetag": "v0.14.1-beta",
+    "url": "https://raw.githubusercontent.com/lightningnetwork/lnd",
+    "protocversion": "3.19.3"
   },
   "scripts": {
     "test": "mocha \"test/**/*.test.ts\"",
     "build": "tsc -p tsconfig.build.json && cp -r lnd/. dist/lnd",
     "clean": "rimraf dist",
     "lint": "tslint -c tslint.json '{src,test}/**/*.ts' -e 'src/types/generated/**/*.ts' --fix",
-    "generate": "sh scripts/generate_types.sh ${npm_package_config_lnd_release_tag} ${npm_package_config_protoc_version}",
+    "generate": "sh scripts/generate_types.sh ${npm_package_config_releasetag} ${npm_package_config_protocversion}",
     "update-protos": "sh scripts/update_protos.sh"
   },
   "repository": "https://github.com/RadarTech/lnrpc",
@@ -25,14 +25,14 @@
     "client",
     "bitcoin"
   ],
-  "author": "RadarTech",
+  "author": "Lily Technologies, Inc",
   "license": "MIT",
   "dependencies": {
     "@grpc/grpc-js": "^1.2.4",
     "@grpc/proto-loader": "^0.4.0",
     "@types/google-protobuf": "^3.2.7",
     "pkg-dir": "^2.0.0",
-    "ts-protoc-gen": "^0.8.0"
+    "ts-protoc-gen": "^0.15.0"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
