@@ -1,6 +1,6 @@
 {
-  "name": "@lily/lnrpc",
-  "version": "v0.14.1-beta",
+  "name": "@lily-technologies/lnrpc",
+  "version": "0.14.1-beta",
   "description": "A Typescript gRPC client for LND with support for all LND sub-servers",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -17,7 +17,10 @@
     "generate": "sh scripts/generate_types.sh ${npm_package_config_releasetag} ${npm_package_config_protocversion}",
     "update-protos": "sh scripts/update_protos.sh"
   },
-  "repository": "https://github.com/RadarTech/lnrpc",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lily-Technologies/lnrpc.git"
+  },
   "keywords": [
     "lnd",
     "lightning network",
@@ -48,5 +51,9 @@
   },
   "engines": {
     "node": ">= 10.*"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/Lily-Technologies/lnrpc/issues"
+  },
+  "homepage": "https://github.com/Lily-Technologies/lnrpc#readme"
 }

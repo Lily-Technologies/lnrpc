@@ -1,11 +1,6 @@
-## @radar/lnrpc
+## @lily-technologies/lnrpc
 
-[![CircleCI](https://img.shields.io/circleci/project/github/RadarTech/lnrpc/master.svg?style=flat)](https://circleci.com/gh/RadarTech/lnrpc)
-[![Known Vulnerabilities](https://snyk.io/test/github/RadarTech/lnrpc/badge.svg?targetFile=package.json)](https://snyk.io/test/github/RadarTech/lnrpc?targetFile=package.json)
-[![NPM Version](https://img.shields.io/npm/v/@radar/lnrpc.svg?style=flat)](https://www.npmjs.com/package/@radar/lnrpc)
-[![License](https://img.shields.io/github/license/radartech/lnrpc.svg?style=flat)](https://img.shields.io/github/license/radartech/lnrpc.svg?style=flat)
-
-A Typescript gRPC client for LND with support for all LND sub-servers. Originally forked from [Matt-Jensen/lnrpc](https://github.com/Matt-Jensen/lnrpc).
+A Typescript gRPC client for LND with support for all LND sub-servers. Originally forked from [RadarTech/lnrpc](https://github.com/RadarTech/lnrpc).
 
 ### Features
 - Auto-generates [lnd/lnrpc](https://github.com/lightningnetwork/lnd/tree/master/lnrpc) clients and Typescript type definitions using a target release tag
@@ -17,9 +12,9 @@ A Typescript gRPC client for LND with support for all LND sub-servers. Originall
 
 ### Installation
 ```sh
-npm install @radar/lnrpc
+npm install @lily-technologies/lnrpc
 # OR
-yarn add @radar/lnrpc
+yarn add @lily-technologies/lnrpc
 ```
 
 **Notes:**
@@ -45,13 +40,13 @@ import {
   createWalletRpc,
   createWatchtowerRpc,
   createWtClientRpc,
-} from '@radar/lnrpc';
+} from '@lily-technologies/lnrpc';
 ```
 
 You can also import the create function for the main gRPC server using the default import:
 
 ```typescript
-import createLnRpc from '@radar/lnrpc';
+import createLnRpc from '@lily-technologies/lnrpc';
 ```
 
 If you want to interact with all servers, wrap the functions in a class or object for easy initialization:
@@ -76,7 +71,7 @@ import createLnRpc, {
   WalletRpc,
   WatchtowerRpc,
   WtClientRpc,
-} from '@radar/lnrpc';
+} from '@lily-technologies/lnrpc';
 
 export class Lightning {
   public static lnrpc: LnRpc;
@@ -112,7 +107,7 @@ export class Lightning {
 Connecting to an lnd instance at `localhost:10001`.
 
 ```typescript
-import createLnRpc from '@radar/lnrpc';
+import createLnRpc from '@lily-technologies/lnrpc';
 
 (async () => {
   const lnRpcClient = await createLnRpc(config);
@@ -134,7 +129,7 @@ import createLnRpc from '@radar/lnrpc';
 ### Options Example - Main Server
 
 ```typescript
-import createLnRpc from '@radar/lnrpc';
+import createLnRpc from '@lily-technologies/lnrpc';
 
 (async () => {
   const lnRpcClient = await createLnRpc({
@@ -197,7 +192,7 @@ you'll have to opt to disable certificate pinning by passing `{ tls: false }` wi
 
 #### Clone Repository & Install Dependencies
 ```sh
-git clone git@github.com:RadarTech/lnrpc.git && cd $_
+git clone git@github.com:Lily-Technologies/lnrpc.git && cd $_
 
 npm install
 # OR
