@@ -1,11 +1,11 @@
-import { join } from 'path';
-import pkgDir from 'pkg-dir';
-import packageJson from '../../package.json';
-import { createRouter } from '../services';
-import { RouterRpc, RouterRpcClientConfig } from '../types';
-import { createCredentials } from './create-credentials';
-import { createGrpcObject } from './create-grpc-object';
-import { defaults } from './defaults';
+import { join } from "path";
+import pkgDir from "pkg-dir";
+import packageJson from "../../package.json";
+import { createRouter } from "../services";
+import { RouterRpc, RouterRpcClientConfig } from "../types";
+import { createCredentials } from "./create-credentials";
+import { createGrpcObject } from "./create-grpc-object";
+import { defaults } from "./defaults";
 
 /**
  * Factory for a routerrpc instance & proxy responsible for:
@@ -19,16 +19,15 @@ import { defaults } from './defaults';
  * @param userConfig The user provided configuration details
  * @return Returns proxy to routerrpc instance
  */
-export async function createRouterRpc<T = unknown>(userConfig: RouterRpcClientConfig): Promise<T & RouterRpc> {
+export async function createRouterRpc<T = unknown>(
+  userConfig: RouterRpcClientConfig
+): Promise<T & RouterRpc> {
   const rootPath = await pkgDir(__dirname);
   const lndProtosRootPath = join(
     rootPath,
-    `lnd/${packageJson.config['lnd-release-tag']}`,
+    `lnd/${packageJson.config["releasetag"]}`
   );
-  const protoFilePath = join(
-    lndProtosRootPath,
-    '/routerrpc/router.proto',
-  );
+  const protoFilePath = join(lndProtosRootPath, "/routerrpc/router.proto");
 
   // Configuration options
   const config = {
@@ -53,10 +52,11 @@ export async function createRouterRpc<T = unknown>(userConfig: RouterRpcClientCo
    * Routerrpc instance
    */
   const routerrpc = Object.create(null, {
-    description: {value: grpcPkgObj},
+    description: { value: grpcPkgObj },
     router: {
       value:
-        router || createRouter({
+        router ||
+        createRouter({
           grpcPkgObj,
           server,
           credentials,
@@ -72,7 +72,7 @@ export async function createRouterRpc<T = unknown>(userConfig: RouterRpcClientCo
      * @param key
      */
     get(target: any, key: string): any {
-      if (typeof target.router[key] === 'function') {
+      if (typeof target.router[key] === "function") {
         return target.router[key].bind(target.router);
       } else {
         return target[key]; // forward

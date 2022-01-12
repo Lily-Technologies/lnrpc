@@ -1,11 +1,11 @@
-import { join } from 'path';
-import pkgDir from 'pkg-dir';
-import packageJson from '../../package.json';
-import { createWatchtowerClient } from '../services';
-import { WtClientRpc, WtClientRpcClientConfig } from '../types';
-import { createCredentials } from './create-credentials';
-import { createGrpcObject } from './create-grpc-object';
-import { defaults } from './defaults';
+import { join } from "path";
+import pkgDir from "pkg-dir";
+import packageJson from "../../package.json";
+import { createWatchtowerClient } from "../services";
+import { WtClientRpc, WtClientRpcClientConfig } from "../types";
+import { createCredentials } from "./create-credentials";
+import { createGrpcObject } from "./create-grpc-object";
+import { defaults } from "./defaults";
 
 /**
  * Factory for a wtclientrpc instance & proxy responsible for:
@@ -19,11 +19,13 @@ import { defaults } from './defaults';
  * @param userConfig The user provided configuration details
  * @return Returns proxy to wtclientrpc instance
  */
-export async function createWtClientRpc<T = unknown>(userConfig: WtClientRpcClientConfig): Promise<T & WtClientRpc> {
+export async function createWtClientRpc<T = unknown>(
+  userConfig: WtClientRpcClientConfig
+): Promise<T & WtClientRpc> {
   const rootPath = await pkgDir(__dirname);
   const protoFilePath = join(
     rootPath,
-    `lnd/${packageJson.config['lnd-release-tag']}/wtclientrpc/wtclient.proto`,
+    `lnd/${packageJson.config["releasetag"]}/wtclientrpc/wtclient.proto`
   );
 
   // Configuration options
@@ -31,7 +33,8 @@ export async function createWtClientRpc<T = unknown>(userConfig: WtClientRpcClie
     ...defaults,
     ...userConfig,
   };
-  const { watchtowerClient, server, grpcLoader, grpc, includeDefaults } = config;
+  const { watchtowerClient, server, grpcLoader, grpc, includeDefaults } =
+    config;
 
   // Generate grpc SSL credentials
   const credentials = await createCredentials(config);
@@ -48,10 +51,11 @@ export async function createWtClientRpc<T = unknown>(userConfig: WtClientRpcClie
    * Wtclientrpc instance
    */
   const wtclientrpc = Object.create(null, {
-    description: {value: grpcPkgObj},
-      watchtowerClient: {
+    description: { value: grpcPkgObj },
+    watchtowerClient: {
       value:
-        watchtowerClient || createWatchtowerClient({
+        watchtowerClient ||
+        createWatchtowerClient({
           grpcPkgObj,
           server,
           credentials,
@@ -67,7 +71,7 @@ export async function createWtClientRpc<T = unknown>(userConfig: WtClientRpcClie
      * @param key
      */
     get(target: any, key: string): any {
-      if (typeof target.watchtowerClient[key] === 'function') {
+      if (typeof target.watchtowerClient[key] === "function") {
         return target.watchtowerClient[key].bind(target.watchtowerClient);
       } else {
         return target[key]; // forward

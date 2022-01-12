@@ -1,11 +1,11 @@
-import { join } from 'path';
-import pkgDir from 'pkg-dir';
-import packageJson from '../../package.json';
-import { createAutopilot } from '../services';
-import { AutopilotRpc, AutopilotRpcClientConfig } from '../types';
-import { createCredentials } from './create-credentials';
-import { createGrpcObject } from './create-grpc-object';
-import { defaults } from './defaults';
+import { join } from "path";
+import pkgDir from "pkg-dir";
+import packageJson from "../../package.json";
+import { createAutopilot } from "../services";
+import { AutopilotRpc, AutopilotRpcClientConfig } from "../types";
+import { createCredentials } from "./create-credentials";
+import { createGrpcObject } from "./create-grpc-object";
+import { defaults } from "./defaults";
 
 /**
  * Factory for a autopilotrpc instance & proxy responsible for:
@@ -19,11 +19,13 @@ import { defaults } from './defaults';
  * @param userConfig The user provided configuration details
  * @return Returns proxy to autopilotrpc instance
  */
-export async function createAutopilotRpc<T = unknown>(userConfig: AutopilotRpcClientConfig): Promise<T & AutopilotRpc> {
+export async function createAutopilotRpc<T = unknown>(
+  userConfig: AutopilotRpcClientConfig
+): Promise<T & AutopilotRpc> {
   const rootPath = await pkgDir(__dirname);
   const protoFilePath = join(
     rootPath,
-    `lnd/${packageJson.config['lnd-release-tag']}/autopilotrpc/autopilot.proto`,
+    `lnd/${packageJson.config["releasetag"]}/autopilotrpc/autopilot.proto`
   );
 
   // Configuration options
@@ -48,10 +50,11 @@ export async function createAutopilotRpc<T = unknown>(userConfig: AutopilotRpcCl
    * Autopilotrpc instance
    */
   const autopilotrpc = Object.create(null, {
-    description: {value: grpcPkgObj},
+    description: { value: grpcPkgObj },
     autopilot: {
       value:
-        autopilot || createAutopilot({
+        autopilot ||
+        createAutopilot({
           grpcPkgObj,
           server,
           credentials,
@@ -67,7 +70,7 @@ export async function createAutopilotRpc<T = unknown>(userConfig: AutopilotRpcCl
      * @param key
      */
     get(target: any, key: string): any {
-      if (typeof target.autopilot[key] === 'function') {
+      if (typeof target.autopilot[key] === "function") {
         return target.autopilot[key].bind(target.autopilot);
       } else {
         return target[key]; // forward

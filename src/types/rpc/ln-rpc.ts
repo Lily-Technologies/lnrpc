@@ -1,5 +1,6 @@
 import { Duplex, Readable } from "../streams";
 import { KeyDescriptor } from "./sign-rpc";
+import { EstimateFeeResponse } from "./wallet-rpc";
 
 export enum AddressType {
   WITNESS_PUBKEY_HASH = 0,
@@ -568,11 +569,6 @@ export interface ChanBackupSnapshot {
   multiChanBackup?: MultiChanBackup;
 }
 
-export interface EstimateFeeResponse {
-  feeSat: string;
-  feerateSatPerByte: string;
-}
-
 export interface EstimateFeeRequest {
   addrtoamount: Array<[string, number]>;
   targetConf: number;
@@ -675,7 +671,7 @@ export interface VerifyMessageResponse {
 export interface ConnectPeerRequest {
   addr?: LightningAddress;
   perm?: boolean;
-  timeout: number;
+  timeout?: number;
 }
 
 export interface DisconnectPeerRequest {
@@ -994,9 +990,9 @@ export interface Invoice {
   htlcs?: InvoiceHTLC[];
   features?: Array<[number, Feature]>;
   isKeysend?: boolean;
-  paymentAddr: Buffer | string;
-  isAmp: boolean;
-  ampInvoiceState: Array<[string, AMPInvoiceState]>;
+  paymentAddr?: Buffer | string;
+  isAmp?: boolean;
+  ampInvoiceState?: Array<[string, AMPInvoiceState]>;
 }
 
 export interface InvoiceHTLC {

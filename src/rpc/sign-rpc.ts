@@ -1,11 +1,11 @@
-import { join } from 'path';
-import pkgDir from 'pkg-dir';
-import packageJson from '../../package.json';
-import { createSigner } from '../services';
-import { SignRpc, SignRpcClientConfig } from '../types';
-import { createCredentials } from './create-credentials';
-import { createGrpcObject } from './create-grpc-object';
-import { defaults } from './defaults';
+import { join } from "path";
+import pkgDir from "pkg-dir";
+import packageJson from "../../package.json";
+import { createSigner } from "../services";
+import { SignRpc, SignRpcClientConfig } from "../types";
+import { createCredentials } from "./create-credentials";
+import { createGrpcObject } from "./create-grpc-object";
+import { defaults } from "./defaults";
 
 /**
  * Factory for a signrpc instance & proxy responsible for:
@@ -19,11 +19,13 @@ import { defaults } from './defaults';
  * @param userConfig The user provided configuration details
  * @return Returns proxy to signrpc instance
  */
-export async function createSignRpc<T = unknown>(userConfig: SignRpcClientConfig): Promise<T & SignRpc> {
+export async function createSignRpc<T = unknown>(
+  userConfig: SignRpcClientConfig
+): Promise<T & SignRpc> {
   const rootPath = await pkgDir(__dirname);
   const protoFilePath = join(
     rootPath,
-    `lnd/${packageJson.config['lnd-release-tag']}/signrpc/signer.proto`,
+    `lnd/${packageJson.config["releasetag"]}/signrpc/signer.proto`
   );
 
   // Configuration options
@@ -48,10 +50,11 @@ export async function createSignRpc<T = unknown>(userConfig: SignRpcClientConfig
    * Signrpc instance
    */
   const signrpc = Object.create(null, {
-    description: {value: grpcPkgObj},
+    description: { value: grpcPkgObj },
     signer: {
       value:
-        signer || createSigner({
+        signer ||
+        createSigner({
           grpcPkgObj,
           server,
           credentials,
@@ -67,7 +70,7 @@ export async function createSignRpc<T = unknown>(userConfig: SignRpcClientConfig
      * @param key
      */
     get(target: any, key: string): any {
-      if (typeof target.signer[key] === 'function') {
+      if (typeof target.signer[key] === "function") {
         return target.signer[key].bind(target.signer);
       } else {
         return target[key]; // forward

@@ -4,6 +4,9 @@ import {
   Utxo,
   ListUnspentResponse,
   Transaction,
+  ListUnspentRequest,
+  AddressType,
+  EstimateFeeRequest,
 } from "./ln-rpc";
 import { KeyDescriptor, KeyLocator, TxOut } from "./sign-rpc";
 
@@ -28,13 +31,6 @@ export enum SweepsCase {
   SWEEPS_NOT_SET = 0,
   TRANSACTION_DETAILS = 1,
   TRANSACTION_IDS = 2,
-}
-
-export enum AddressType {
-  UNKNOWN = 0,
-  WITNESS_PUBKEY_HASH = 1,
-  NESTED_WITNESS_PUBKEY_HASH = 2,
-  HYBRID_NESTED_WITNESS_PUBKEY_HASH = 3,
 }
 
 export interface ListUnspentReq {
@@ -212,12 +208,6 @@ export interface FinalizePsbtRequest {
 
 export interface ListLeasesRequest {}
 
-export interface ListUnspentRequest {
-  minConfs: number;
-  maxConfs: number;
-  account: string;
-}
-
 export interface ReleaseOutputResponse {}
 export interface ListLeasesRequest {}
 
@@ -230,8 +220,8 @@ export interface ListLeasesResponse {
 }
 
 export interface ListAccountsRequest {
-  name: string;
-  addressType: AddressType;
+  name?: string;
+  addressType?: AddressType;
 }
 
 export interface AddrRequest {
@@ -282,10 +272,6 @@ export interface PendingSweepsRequest {}
 
 export interface LabelTransactionResponse {}
 
-export interface EstimateFeeRequest {
-  confTarget: number;
-}
-
 export interface EstimateFeeResponse {
   satPerKw: number;
 }
@@ -298,7 +284,7 @@ export interface WalletRpc {
     ListUnspent returns a list of all utxos spendable by the wallet with a
     number of confirmations between the specified minimum and maximum.
     */
-  ListUnspent(args: ListUnspentRequest): Promise<ListUnspentResponse>;
+  listUnspent(args: ListUnspentRequest): Promise<ListUnspentResponse>;
 
   /*
     LeaseOutput locks an output to the given ID, preventing it from being
@@ -307,44 +293,44 @@ export interface WalletRpc {
     successive invocations of this RPC. Outputs can be unlocked before their
     expiration through `ReleaseOutput`.
     */
-  LeaseOutput(args: LeaseOutputRequest): Promise<LeaseOutputResponse>;
+  leaseOutput(args: LeaseOutputRequest): Promise<LeaseOutputResponse>;
 
   /*
     ReleaseOutput unlocks an output, allowing it to be available for coin
     selection if it remains unspent. The ID should match the one used to
     originally lock the output.
     */
-  ReleaseOutput(args: ReleaseOutputRequest): Promise<ReleaseOutputResponse>;
+  releaseOutput(args: ReleaseOutputRequest): Promise<ReleaseOutputResponse>;
 
   /*
     ListLeases lists all currently locked utxos.
     */
-  ListLeases(args: ListLeasesRequest): Promise<ListLeasesResponse>;
+  listLeases(args: ListLeasesRequest): Promise<ListLeasesResponse>;
 
   /*
     DeriveNextKey attempts to derive the *next* key within the key family
     (account in BIP43) specified. This method should return the next external
     child within this branch.
     */
-  DeriveNextKey(args: KeyReq): Promise<KeyDescriptor>;
+  deriveNextKey(args: KeyReq): Promise<KeyDescriptor>;
 
   /*
     DeriveKey attempts to derive an arbitrary key specified by the passed
     KeyLocator.
     */
-  DeriveKey(args: KeyLocator): Promise<KeyDescriptor>;
+  deriveKey(args: KeyLocator): Promise<KeyDescriptor>;
 
   /*
     NextAddr returns the next unused address within the wallet.
     */
-  NextAddr(args: AddrRequest): Promise<AddrResponse>;
+  nextAddr(args: AddrRequest): Promise<AddrResponse>;
 
   /*
     ListAccounts retrieves all accounts belonging to the wallet by default. A
     name and key scope filter can be provided to filter through all of the
     wallet accounts and return only those matching.
     */
-  ListAccounts(args: ListAccountsRequest): Promise<ListAccountsResponse>;
+  listAccounts(args?: ListAccountsRequest): Promise<ListAccountsResponse>;
 
   /*
     ImportAccount imports an account backed by an account extended public key.
@@ -371,7 +357,7 @@ export interface WalletRpc {
     detected by lnd if they happen after the import. Rescans to detect past
     events will be supported later on.
     */
-  ImportAccount(args: ImportAccountRequest): Promise<ImportAccountResponse>;
+  importAccount(args: ImportAccountRequest): Promise<ImportAccountResponse>;
 
   /*
     ImportPublicKey imports a public key as watch-only into the wallet.
@@ -380,7 +366,7 @@ export interface WalletRpc {
     they happen after the import. Rescans to detect past events will be
     supported later on.
     */
-  ImportPublicKey(
+  importPublicKey(
     args: ImportPublicKeyRequest
   ): Promise<ImportPublicKeyResponse>;
 
@@ -390,21 +376,21 @@ export interface WalletRpc {
     attempt to re-broadcast the transaction on start up, until it enters the
     chain.
     */
-  PublishTransaction(args: Transaction): Promise<PublishResponse>;
+  publishTransaction(args: Transaction): Promise<PublishResponse>;
 
   /*
     SendOutputs is similar to the existing sendmany call in Bitcoind, and
     allows the caller to create a transaction that sends to several outputs at
     once. This is ideal when wanting to batch create a set of transactions.
     */
-  SendOutputs(args: SendOutputsRequest): Promise<SendOutputsResponse>;
+  sendOutputs(args: SendOutputsRequest): Promise<SendOutputsResponse>;
 
   /*
     EstimateFee attempts to query the internal fee estimator of the wallet to
     determine the fee (in sat/kw) to attach to a transaction in order to
     achieve the confirmation target.
     */
-  EstimateFee(args: EstimateFeeRequest): Promise<EstimateFeeResponse>;
+  estimateFee(args: EstimateFeeRequest): Promise<EstimateFeeResponse>;
 
   /*
     PendingSweeps returns lists of on-chain outputs that lnd is currently
@@ -416,7 +402,7 @@ export interface WalletRpc {
     remain supported. This is an advanced API that depends on the internals of
     the UtxoSweeper, so things may change.
     */
-  PendingSweeps(args: PendingSweepsRequest): Promise<PendingSweepsResponse>;
+  pendingSweeps(args: PendingSweepsRequest): Promise<PendingSweepsResponse>;
 
   /*
     BumpFee bumps the fee of an arbitrary input within a transaction. This RPC
@@ -445,14 +431,14 @@ export interface WalletRpc {
     fee preference being provided. For now, the responsibility of ensuring that
     the new fee preference is sufficient is delegated to the user.
     */
-  BumpFee(args: BumpFeeRequest): Promise<BumpFeeResponse>;
+  bumpFee(args: BumpFeeRequest): Promise<BumpFeeResponse>;
 
   /*
     ListSweeps returns a list of the sweep transactions our node has produced.
     Note that these sweeps may not be confirmed yet, as we record sweeps on
     broadcast, not confirmation.
     */
-  ListSweeps(args: ListSweepsRequest): Promise<ListSweepsResponse>;
+  listSweeps(args: ListSweepsRequest): Promise<ListSweepsResponse>;
 
   /*
     LabelTransaction adds a label to a transaction. If the transaction already
@@ -460,7 +446,7 @@ export interface WalletRpc {
     overwrite the exiting transaction label. Labels must not be empty, and
     cannot exceed 500 characters.
     */
-  LabelTransaction(
+  labelTransaction(
     args: LabelTransactionRequest
   ): Promise<LabelTransactionResponse>;
 
@@ -484,7 +470,7 @@ export interface WalletRpc {
     publishing the transaction) or to unlock/release the locked UTXOs in case of
     an error on the caller's side.
     */
-  FundPsbt(args: FundPsbtRequest): Promise<FundPsbtResponse>;
+  fundPsbt(args: FundPsbtRequest): Promise<FundPsbtResponse>;
 
   /*
     FinalizePsbt expects a partial transaction with all inputs and outputs fully
@@ -499,5 +485,5 @@ export interface WalletRpc {
     caller's responsibility to either publish the transaction on success or
     unlock/release any locked UTXOs in case of an error in this method.
     */
-  FinalizePsbt(args: FinalizePsbtRequest): Promise<FinalizePsbtResponse>;
+  finalizePsbt(args: FinalizePsbtRequest): Promise<FinalizePsbtResponse>;
 }

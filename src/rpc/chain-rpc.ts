@@ -1,11 +1,11 @@
-import { join } from 'path';
-import pkgDir from 'pkg-dir';
-import packageJson from '../../package.json';
-import { createChainNotifier } from '../services';
-import { ChainRpc, ChainRpcClientConfig } from '../types';
-import { createCredentials } from './create-credentials';
-import { createGrpcObject } from './create-grpc-object';
-import { defaults } from './defaults';
+import { join } from "path";
+import pkgDir from "pkg-dir";
+import packageJson from "../../package.json";
+import { createChainNotifier } from "../services";
+import { ChainRpc, ChainRpcClientConfig } from "../types";
+import { createCredentials } from "./create-credentials";
+import { createGrpcObject } from "./create-grpc-object";
+import { defaults } from "./defaults";
 
 /**
  * Factory for a chainrpc instance & proxy responsible for:
@@ -19,11 +19,13 @@ import { defaults } from './defaults';
  * @param userConfig The user provided configuration details
  * @return Returns proxy to chainrpc instance
  */
-export async function createChainRpc<T = unknown>(userConfig: ChainRpcClientConfig): Promise<T & ChainRpc> {
+export async function createChainRpc<T = unknown>(
+  userConfig: ChainRpcClientConfig
+): Promise<T & ChainRpc> {
   const rootPath = await pkgDir(__dirname);
   const protoFilePath = join(
     rootPath,
-    `lnd/${packageJson.config['lnd-release-tag']}/chainrpc/chainnotifier.proto`,
+    `lnd/${packageJson.config["releasetag"]}/chainrpc/chainnotifier.proto`
   );
 
   // Configuration options
@@ -49,10 +51,11 @@ export async function createChainRpc<T = unknown>(userConfig: ChainRpcClientConf
    * @type {chainrpc}
    */
   const chainrpc = Object.create(null, {
-    description: {value: grpcPkgObj},
+    description: { value: grpcPkgObj },
     chainNotifier: {
       value:
-        chainNotifier || createChainNotifier({
+        chainNotifier ||
+        createChainNotifier({
           grpcPkgObj,
           server,
           credentials,
@@ -68,7 +71,7 @@ export async function createChainRpc<T = unknown>(userConfig: ChainRpcClientConf
      * @param key
      */
     get(target: any, key: string): any {
-      if (typeof target.chainNotifier[key] === 'function') {
+      if (typeof target.chainNotifier[key] === "function") {
         return target.chainNotifier[key].bind(target.chainNotifier);
       } else {
         return target[key]; // forward

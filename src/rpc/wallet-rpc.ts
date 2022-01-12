@@ -1,11 +1,11 @@
-import { join } from 'path';
-import pkgDir from 'pkg-dir';
-import packageJson from '../../package.json';
-import { createWalletKit } from '../services';
-import { WalletRpc, WalletRpcClientConfig } from '../types';
-import { createCredentials } from './create-credentials';
-import { createGrpcObject } from './create-grpc-object';
-import { defaults } from './defaults';
+import { join } from "path";
+import pkgDir from "pkg-dir";
+import packageJson from "../../package.json";
+import { createWalletKit } from "../services";
+import { WalletRpc, WalletRpcClientConfig } from "../types";
+import { createCredentials } from "./create-credentials";
+import { createGrpcObject } from "./create-grpc-object";
+import { defaults } from "./defaults";
 
 /**
  * Factory for a walletrpc instance & proxy responsible for:
@@ -19,16 +19,15 @@ import { defaults } from './defaults';
  * @param userConfig The user provided configuration details
  * @return Returns proxy to walletrpc instance
  */
-export async function createWalletRpc<T = unknown>(userConfig: WalletRpcClientConfig): Promise<T & WalletRpc> {
+export async function createWalletRpc<T = unknown>(
+  userConfig: WalletRpcClientConfig
+): Promise<T & WalletRpc> {
   const rootPath = await pkgDir(__dirname);
   const lndProtosRootPath = join(
     rootPath,
-    `lnd/${packageJson.config['lnd-release-tag']}`,
+    `lnd/${packageJson.config["releasetag"]}`
   );
-  const protoFilePath = join(
-    lndProtosRootPath,
-    '/walletrpc/walletkit.proto',
-  );
+  const protoFilePath = join(lndProtosRootPath, "/walletrpc/walletkit.proto");
 
   // Configuration options
   const config = {
@@ -53,10 +52,11 @@ export async function createWalletRpc<T = unknown>(userConfig: WalletRpcClientCo
    * Walletrpc instance
    */
   const walletrpc = Object.create(null, {
-    description: {value: grpcPkgObj},
+    description: { value: grpcPkgObj },
     walletKit: {
       value:
-        walletKit || createWalletKit({
+        walletKit ||
+        createWalletKit({
           grpcPkgObj,
           server,
           credentials,
@@ -72,7 +72,7 @@ export async function createWalletRpc<T = unknown>(userConfig: WalletRpcClientCo
      * @param key
      */
     get(target: any, key: string): any {
-      if (typeof target.walletKit[key] === 'function') {
+      if (typeof target.walletKit[key] === "function") {
         return target.walletKit[key].bind(target.walletKit);
       } else {
         return target[key]; // forward

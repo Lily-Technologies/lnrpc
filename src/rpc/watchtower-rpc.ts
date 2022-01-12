@@ -1,11 +1,11 @@
-import { join } from 'path';
-import pkgDir from 'pkg-dir';
-import packageJson from '../../package.json';
-import { createWatchtower } from '../services';
-import { WatchtowerRpc, WatchtowerRpcClientConfig } from '../types';
-import { createCredentials } from './create-credentials';
-import { createGrpcObject } from './create-grpc-object';
-import { defaults } from './defaults';
+import { join } from "path";
+import pkgDir from "pkg-dir";
+import packageJson from "../../package.json";
+import { createWatchtower } from "../services";
+import { WatchtowerRpc, WatchtowerRpcClientConfig } from "../types";
+import { createCredentials } from "./create-credentials";
+import { createGrpcObject } from "./create-grpc-object";
+import { defaults } from "./defaults";
 
 /**
  * Factory for a watchtowerrpc instance & proxy responsible for:
@@ -20,12 +20,12 @@ import { defaults } from './defaults';
  * @return Returns proxy to watchtowerrpc instance
  */
 export async function createWatchtowerRpc<T = unknown>(
-  userConfig: WatchtowerRpcClientConfig,
+  userConfig: WatchtowerRpcClientConfig
 ): Promise<T & WatchtowerRpc> {
   const rootPath = await pkgDir(__dirname);
   const protoFilePath = join(
     rootPath,
-    `lnd/${packageJson.config['lnd-release-tag']}/watchtowerrpc/watchtower.proto`,
+    `lnd/${packageJson.config["releasetag"]}/watchtowerrpc/watchtower.proto`
   );
 
   // Configuration options
@@ -50,10 +50,11 @@ export async function createWatchtowerRpc<T = unknown>(
    * Watchtowerrpc instance
    */
   const watchtowerrpc = Object.create(null, {
-    description: {value: grpcPkgObj},
+    description: { value: grpcPkgObj },
     watchtower: {
       value:
-        watchtower || createWatchtower({
+        watchtower ||
+        createWatchtower({
           grpcPkgObj,
           server,
           credentials,
@@ -69,7 +70,7 @@ export async function createWatchtowerRpc<T = unknown>(
      * @param key
      */
     get(target: any, key: string): any {
-      if (typeof target.watchtower[key] === 'function') {
+      if (typeof target.watchtower[key] === "function") {
         return target.watchtower[key].bind(target.watchtower);
       } else {
         return target[key]; // forward
