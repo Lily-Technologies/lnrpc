@@ -1,5 +1,5 @@
-import { Duplex, Readable } from '../streams';
-import { KeyDescriptor } from './sign-rpc';
+import { Duplex, Readable } from "../streams";
+import { KeyDescriptor } from "./sign-rpc";
 
 export enum AddressType {
   WITNESS_PUBKEY_HASH = 0,
@@ -21,6 +21,7 @@ export enum SyncType {
   UNKNOWN_SYNC = 0,
   ACTIVE_SYNC = 1,
   PASSIVE_SYNC = 2,
+  PINNED_SYNC = 3,
 }
 
 export enum UpdateType {
@@ -29,6 +30,15 @@ export enum UpdateType {
   ACTIVE_CHANNEL = 2,
   INACTIVE_CHANNEL = 3,
   PENDING_OPEN_CHANNEL = 4,
+  FULLY_RESOLVED_CHANNEL = 5,
+}
+
+export enum UpdateFailure {
+  UPDATE_FAILURE_UNKNOWN = 0,
+  UPDATE_FAILURE_PENDING = 1,
+  UPDATE_FAILURE_NOT_FOUND = 2,
+  UPDATE_FAILURE_INTERNAL_ERR = 3,
+  UPDATE_FAILURE_INVALID_PARAMETER = 4,
 }
 
 export enum ChannelCase {
@@ -194,6 +204,7 @@ export enum FailureCode {
   PERMANENT_CHANNEL_FAILURE = 21,
   EXPIRY_TOO_FAR = 22,
   MPP_TIMEOUT = 23,
+  INVALID_ONION_PAYLOA = 24,
   INTERNAL_FAILURE = 997,
   UNKNOWN_FAILURE = 998,
   UNREADABLE_FAILURE = 999,
@@ -234,6 +245,9 @@ export interface Peer {
   syncType: SyncType;
   features?: Array<[number, Feature]>;
   errors?: TimestampedError[];
+  flapCount: number;
+  lastFlapNs: number;
+  lastPingPayload: Buffer | string;
 }
 
 export interface PeerEvent {
@@ -255,6 +269,9 @@ export interface HTLC {
   amount: string;
   hashLock: Buffer | string;
   expirationHeight: number;
+  htlcIndex: number;
+  forwardingChannel: number;
+  forwardingHtlcIndex: number;
 }
 
 export interface PendingChannel {
@@ -267,6 +284,7 @@ export interface PendingChannel {
   remoteChanReserveSat: string;
   initiator: Initiator;
   commitmentType: CommitmentType;
+  numForwardingPackages: number;
 }
 
 export interface PendingOpenChannel {
@@ -391,12 +409,19 @@ export interface Hop {
   pubKey: string;
   tlvPayload?: boolean;
   mppRecord?: MPPRecord;
+  ampRecord?: AMPRecord;
   customRecords?: Array<[number, Buffer]> | Array<[string]>;
 }
 
 export interface MPPRecord {
   paymentAddr?: Buffer | string;
   totalAmtMsat?: number;
+}
+
+export interface AMPRecord {
+  rootShare: Buffer | string;
+  setId: Buffer | string;
+  childIndex: number;
 }
 
 export interface Route {
@@ -465,7 +490,8 @@ export interface Failure {
 }
 
 export interface HTLCAttempt {
-  status?: HTLCStatus;
+  attemptId: number;
+  status: HTLCStatus;
   route?: Route;
   attemptTimeNs?: string;
   resolveTimeNs?: string;
@@ -515,6 +541,7 @@ export interface ForwardingEvent {
   feeMsat: string;
   amtInMsat?: string;
   amtOutMsat?: string;
+  timestampNs: number;
 }
 
 export interface OutPoint {
@@ -549,6 +576,8 @@ export interface EstimateFeeResponse {
 export interface EstimateFeeRequest {
   addrtoamount: Array<[string, number]>;
   targetConf: number;
+  minConfs: number;
+  spendUnconfirmed: boolean;
 }
 
 export interface ExportChannelBackupRequest {
@@ -561,9 +590,20 @@ export interface WalletBalanceResponse {
   unconfirmedBalance: string;
 }
 
+export interface Amount {
+  sat: number;
+  msat: number;
+}
+
 export interface ChannelBalanceResponse {
   balance: string;
   pendingOpenBalance: string;
+  localBalance?: Amount;
+  remoteBalance?: Amount;
+  unsettledLocalBalance?: Amount;
+  unsettledRemoteBalance?: Amount;
+  pendingOpenLocalBalance?: Amount;
+  pendingOpenRemoteBalance?: Amount;
 }
 
 export interface GetTransactionsRequest {
@@ -579,9 +619,12 @@ export interface SendCoinsRequest {
   addr: string;
   amount: string;
   targetConf?: number;
+  satPerVbyte: number;
   satPerByte?: string;
   sendAll?: boolean;
   labal?: string;
+  minConfs: number;
+  spendUnconfirmed: boolean;
 }
 
 export interface SendCoinsResponse {
@@ -591,8 +634,10 @@ export interface SendCoinsResponse {
 export interface SendManyRequest {
   addrtoamount: Array<[string, number]>;
   targetConf?: number;
-  satPerByte?: string;
+  satPerVbyte: number;
   label?: string;
+  minConfs: number;
+  spendUnconfirmed: boolean;
 }
 
 export interface SendManyResponse {
@@ -601,6 +646,7 @@ export interface SendManyResponse {
 
 export interface NewAddressRequest {
   type?: AddressType;
+  account: string;
 }
 
 export interface NewAddressResponse {
@@ -609,6 +655,7 @@ export interface NewAddressResponse {
 
 export interface SignMessageRequest {
   msg: Buffer | string;
+  singleHash: boolean;
 }
 
 export interface SignMessageResponse {
@@ -628,6 +675,7 @@ export interface VerifyMessageResponse {
 export interface ConnectPeerRequest {
   addr?: LightningAddress;
   perm?: boolean;
+  timeout: number;
 }
 
 export interface DisconnectPeerRequest {
@@ -645,6 +693,7 @@ export interface ListPeersResponse {
 export interface ListUnspentRequest {
   minConfs: number;
   maxConfs: number;
+  account: string;
 }
 
 export interface ListUnspentResponse {
@@ -712,6 +761,7 @@ export interface ClosedChannelsResponse {
 }
 
 export interface OpenChannelRequest {
+  satPerVbyte: number;
   nodePubkey?: Buffer | string;
   nodePubkeyString?: string;
   localFundingAmount?: string;
@@ -727,6 +777,33 @@ export interface OpenChannelRequest {
   fundingShim?: FundingShim;
   remoteMaxValueInFlightMsat?: number;
   remoteMaxHtlcs?: number;
+  maxLocalCsv: number;
+  commitmentType: CommitmentType;
+}
+
+export interface BatchOpenChannel {
+  nodePubkey: Buffer | string;
+  localFundingAmount: number;
+  pushSat: number;
+  pb_private: boolean;
+  minHtlcMsat: number;
+  remoteCsvDelay: number;
+  closeAddress: string;
+  pendingChanId: Buffer | string;
+  commitmentType: CommitmentType;
+}
+
+export interface BatchOpenChannelRequest {
+  channels: Array<BatchOpenChannel>;
+  targetConf: number;
+  satPerVbyte: number;
+  minConfs: number;
+  spendUnconfirmed: boolean;
+  label: string;
+}
+
+export interface BatchOpenChannelResponse {
+  pendingChannels: Array<PendingUpdate>;
 }
 
 export interface PendingUpdate {
@@ -778,6 +855,7 @@ export interface FundingShimCancel {
 export interface FundingPsbtVerify {
   fundedPsbt: Buffer | string;
   pendingChanId: Buffer | string;
+  skipFinalize: boolean;
 }
 
 export interface FundingPsbtFinalize {
@@ -820,6 +898,7 @@ export interface CloseStatusUpdate {
 export interface AbandonChannelRequest {
   channelPoint?: ChannelPoint;
   pendingFundingShimOnly?: boolean;
+  iKnowWhatIAmDoing: boolean;
 }
 
 export interface SendRequest {
@@ -838,6 +917,7 @@ export interface SendRequest {
   destCustomRecords?: Array<[number, Buffer]> | string[];
   allowSelfPayment?: boolean;
   destFeatures?: FeatureBit[];
+  paymentAddr: Buffer | string;
 }
 
 export interface SendResponse {
@@ -867,11 +947,20 @@ export interface ChannelAcceptRequest {
   csvDelay?: number;
   maxAcceptedHtlcs?: number;
   channelFlags?: number;
+  commitmentType: CommitmentType;
 }
 
 export interface ChannelAcceptResponse {
   accept: boolean;
   pendingChanId: Buffer | string;
+  error: string;
+  upfrontShutdown: string;
+  csvDelay: number;
+  reserveSat: number;
+  inFlightMaxMsat: number;
+  maxHtlcCount: number;
+  minHtlcIn: number;
+  minAcceptDepth: number;
 }
 
 export interface Chain {
@@ -905,6 +994,9 @@ export interface Invoice {
   htlcs?: InvoiceHTLC[];
   features?: Array<[number, Feature]>;
   isKeysend?: boolean;
+  paymentAddr: Buffer | string;
+  isAmp: boolean;
+  ampInvoiceState: Array<[string, AMPInvoiceState]>;
 }
 
 export interface InvoiceHTLC {
@@ -918,12 +1010,22 @@ export interface InvoiceHTLC {
   state: InvoiceHTLCState;
   customRecords: Array<[number, Buffer]> | string[];
   mppTotalAmtMsat: string;
+  amp?: AMP;
+}
+
+export interface AMP {
+  rootShare: Buffer | string;
+  setId: Buffer | string;
+  childIndex: number;
+  hash: Buffer | string;
+  preimage: Buffer | string;
 }
 
 export interface AddInvoiceResponse {
   rHash: Buffer | string;
   paymentRequest: string;
   addIndex: string;
+  paymentAddr: Buffer | string;
 }
 
 export interface ListInvoiceRequest {
@@ -988,12 +1090,37 @@ export interface ListPaymentsResponse {
   lastIndexOffset: number;
 }
 
+export interface DeletePaymentRequest {
+  paymentHash: Buffer | string;
+  failedHtlcsOnly: boolean;
+}
+
+export interface DeleteAllPaymentsRequest {
+  failedPaymentsOnly: boolean;
+  failedHtlcsOnly: boolean;
+}
+
+export namespace DeletePaymentResponse {}
+
 export interface NodeUpdate {
   addresses: string[];
   identityKey: string;
   globalFeatures: string;
   alias: string;
   color: string;
+  nodeAddresses: Array<NodeAddress>;
+  features: Array<[number, Feature]>;
+}
+
+export interface SetID {
+  setId: Buffer | string;
+}
+
+export interface AMPInvoiceState {
+  state: InvoiceHTLCState;
+  settleIndex: number;
+  settleTime: number;
+  amtPaidMsat: number;
 }
 
 export interface ChannelEdgeUpdate {
@@ -1076,14 +1203,30 @@ export interface MacaroonPermission {
 
 export interface BakeMacaroonRequest {
   permissions: MacaroonPermission[];
+  rootKeyId: number;
+  allowExternalPermissions: boolean;
 }
 
 export interface BakeMacaroonResponse {
   macaroon: string;
 }
 
+export interface ListMacaroonIDsRequest {}
+
+export interface ListMacaroonIDsResponse {
+  rootKeyIds: Array<number>;
+}
+
 export interface MacaroonPermissionList {
   permissions: MacaroonPermission[];
+}
+
+export interface DeleteMacaroonIDRequest {
+  rootKeyId: number;
+}
+
+export interface DeleteMacaroonIDResponse {
+  deleted: boolean;
 }
 
 export interface ListPermissionsResponse {
@@ -1093,6 +1236,61 @@ export interface ListPermissionsResponse {
 export interface Op {
   entity: string;
   actions: string[];
+}
+
+export interface CheckMacPermRequest {
+  macaroon: Buffer | string;
+  permissions: Array<MacaroonPermission>;
+  fullmethod: string;
+}
+
+export interface CheckMacPermResponse {
+  valid: boolean;
+}
+
+export interface RPCMiddlewareRequest {
+  requestId: number;
+  rawMacaroon: Buffer | string;
+  customCaveatCondition: string;
+  streamAuth?: StreamAuth;
+  request?: RPCMessage;
+  response?: RPCMessage;
+  msgId: number;
+}
+
+export interface RPCMiddlewareResponse {
+  refMsgId: number;
+  register?: MiddlewareRegistration;
+  feedback?: InterceptFeedback;
+}
+
+export interface MiddlewareRegistration {
+  middlewareName: string;
+  customMacaroonCaveatName: string;
+  readOnlyMode: boolean;
+}
+
+export interface InterceptFeedback {
+  error: string;
+  replaceResponse: boolean;
+  replacementSerialized: Buffer | string;
+}
+
+export enum MiddlewareMessageCase {
+  MIDDLEWARE_MESSAGE_NOT_SET = 0,
+  REGISTER = 2,
+  FEEDBACK = 3,
+}
+
+export interface StreamAuth {
+  methodFullUri: string;
+}
+
+export interface RPCMessage {
+  methodFullUri: string;
+  streamRpc: boolean;
+  typeName: string;
+  serialized: Buffer | string;
 }
 
 export interface MacaroonId {
@@ -1199,6 +1397,16 @@ export interface PolicyUpdateRequest {
   minHtlcMsatSpecified?: boolean;
 }
 
+export interface FailedUpdate {
+  outpoint?: OutPoint;
+  reason: UpdateFailure;
+  updateError: string;
+}
+
+export interface PolicyUpdateResponse {
+  failedUpdates: Array<FailedUpdate>;
+}
+
 export interface ForwardingHistoryRequest {
   startTime?: string;
   endTime?: string;
@@ -1235,7 +1443,7 @@ export interface LnRpc {
    * EstimateFee asks the chain backend to estimate the fee rate and total fees for a transaction
    * that pays to multiple specified outputs.
    */
-  estimateFee(args?: EstimateFeeRequest): Promise <EstimateFeeResponse>;
+  estimateFee(args?: EstimateFeeRequest): Promise<EstimateFeeResponse>;
 
   /**
    * ListUnspent returns a list of all utxos spendable by the wallet with a number of confirmations
@@ -1349,6 +1557,17 @@ export interface LnRpc {
    */
   openChannel(args: OpenChannelRequest): Readable<OpenStatusUpdate>;
 
+  /* lncli: `batchopenchannel`
+    BatchOpenChannel attempts to open multiple single-funded channels in a
+    single transaction in an atomic way. This means either all channel open
+    requests succeed at once or all attempts are aborted if any of them fail.
+    This is the safer variant of using PSBTs to manually fund a batch of
+    channels through the OpenChannel RPC.
+    */
+  batchOpenChannel(
+    args: BatchOpenChannelRequest
+  ): Promise<BatchOpenChannelResponse>;
+
   /**
    * fundingStateStep is an advanced funding related call that allows the caller
    * to either execute some preparatory steps for a funding workflow, or
@@ -1405,7 +1624,9 @@ export interface LnRpc {
    * through the Lightning Network. This method differs from SendPayment in that it allows users to specify a full
    * route manually. This can be used for things like rebalancing, and atomic swaps.
    */
-  sendToRoute(args: SendToRouteRequest): Duplex<SendToRouteRequest, SendResponse>;
+  sendToRoute(
+    args: SendToRouteRequest
+  ): Duplex<SendToRouteRequest, SendResponse>;
 
   /**
    * sendToRouteSync is a synchronous version of sendToRoute. It Will block until the payment either fails or succeeds.
@@ -1529,7 +1750,9 @@ export interface LnRpc {
    * method once lnd is running, or via the InitWallet and UnlockWallet methods
    * from the WalletUnlocker service.
    */
-  exportChannelBackup(args?: ExportChannelBackupRequest): Promise<ChannelBackup>;
+  exportChannelBackup(
+    args?: ExportChannelBackupRequest
+  ): Promise<ChannelBackup>;
 
   /**
    * ExportAllChannelBackups returns static channel backups for all existing
@@ -1606,5 +1829,7 @@ export interface LnRpc {
    * result each message can only contain 50k entries. Each response has the index offset of the last entry. The
    * index offset can be provided to the request to allow the caller to skip a series of records.
    */
-  forwardingHistory(args?: ForwardingHistoryRequest): Promise<ForwardingHistoryResponse>;
+  forwardingHistory(
+    args?: ForwardingHistoryRequest
+  ): Promise<ForwardingHistoryResponse>;
 }

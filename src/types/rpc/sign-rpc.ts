@@ -44,6 +44,8 @@ export interface InputScriptResp {
 export interface SignMessageReq {
   msg: Buffer | string;
   keyLoc?: KeyLocator;
+  doubleHash: boolean;
+  compactSig: boolean;
 }
 
 export interface SignMessageResp {
@@ -63,6 +65,7 @@ export interface VerifyMessageResp {
 export interface SharedKeyRequest {
   ephemeralPubkey: Buffer | string;
   keyLoc?: KeyLocator;
+  keyDesc?: KeyDescriptor;
 }
 
 export interface SharedKeyResponse {
@@ -124,5 +127,5 @@ export interface SignRpc {
    * The resulting shared public key is serialized in the compressed format and
    * hashed with sha256, resulting in the final key length of 256bit.
    */
-   deriveSharedKey(args: SharedKeyRequest): Promise<SharedKeyResponse>;
+  deriveSharedKey(args: SharedKeyRequest): Promise<SharedKeyResponse>;
 }

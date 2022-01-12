@@ -1,4 +1,4 @@
-import { ChanBackupSnapshot } from './ln-rpc';
+import { ChanBackupSnapshot } from "./ln-rpc";
 
 export interface GenSeedRequest {
   aezeedPassphrase?: Buffer | string;
@@ -16,12 +16,34 @@ export interface InitWalletRequest {
   aezeedPassphrase?: Buffer | string;
   recoveryWindow?: number;
   channelBackups?: ChanBackupSnapshot;
+  statelessInit: boolean;
+  extendedMasterKey: string;
+  extendedMasterKeyBirthdayTimestamp: number;
+  watchOnly?: WatchOnly;
+}
+
+export interface WatchOnly {
+  masterKeyBirthdayTimestamp: number;
+  masterKeyFingerprint: Buffer | string;
+  accounts: Array<WatchOnlyAccount>;
+}
+
+export interface WatchOnlyAccount {
+  purpose: number;
+  coinType: number;
+  account: number;
+  xpub: string;
 }
 
 export interface UnlockWalletRequest {
   walletPassword: Buffer | string;
   recoveryWindow?: number;
   channelBackups?: ChanBackupSnapshot;
+  statelessInit: boolean;
+}
+
+export interface ChangePasswordResponse {
+  adminMacaroon: Buffer | string;
 }
 
 export interface ChangePasswordRequest {

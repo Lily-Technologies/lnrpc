@@ -1,3 +1,8 @@
+export enum PolicyType {
+  LEGACY = 0,
+  ANCHOR = 1,
+}
+
 export interface AddTowerRequest {
   pubkey: Buffer | string;
   address?: string;
@@ -17,6 +22,7 @@ export interface TowerSession {
   numPendingBackups: number;
   maxBackups: number;
   sweepSatPerByte: number;
+  sweepSatPerVbyte: number;
 }
 
 export interface Tower {
@@ -42,6 +48,10 @@ export interface StatsResponse {
   numFailedBackups: number;
   numSessionsAcquired: number;
   numSessionsExhausted: number;
+}
+
+export interface PolicyRequest {
+  policyType: PolicyType;
 }
 
 export interface PolicyResponse {

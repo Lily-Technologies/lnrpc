@@ -1,11 +1,26 @@
-import { Duplex, Readable } from '../streams';
-import { Failure, FailureCode, FeatureBit, HTLCAttempt, Payment, Route, RouteHint } from './ln-rpc';
+import { Duplex, Readable } from "../streams";
+import {
+  Failure,
+  FailureCode,
+  FeatureBit,
+  HTLCAttempt,
+  Payment,
+  Route,
+  RouteHint,
+  ChannelPoint,
+} from "./ln-rpc";
 
 export enum HtlcEventType {
   UNKNOWN = 0,
   SEND = 1,
   RECEIVE = 2,
   FORWARD = 3,
+}
+
+export interface ChanStatusAction {
+  ENABLE: 0;
+  DISABLE: 1;
+  AUTO: 2;
 }
 
 export enum FailureDetail {
@@ -195,6 +210,13 @@ export interface CircuitKey {
   htlcId?: number;
 }
 
+export interface UpdateChanStatusRequest {
+  chanPoint?: ChannelPoint;
+  action: ChanStatusAction;
+}
+
+export interface UpdateChanStatusResponse {}
+
 export interface ForwardHtlcInterceptRequest {
   incomingCircuitKey?: CircuitKey;
   incomingAmountMsat?: number;
@@ -266,7 +288,9 @@ export interface RouterRpc {
    * queryProbability returns the current success probability estimate for a
    * given node pair and amount.
    */
-  queryProbability(args: QueryProbabilityRequest): Promise<QueryProbabilityResponse>;
+  queryProbability(
+    args: QueryProbabilityRequest
+  ): Promise<QueryProbabilityResponse>;
 
   /**
    * buildRoute builds a fully specified route based on a list of hop public
@@ -301,5 +325,7 @@ export interface RouterRpc {
    * In case of interception, the htlc can be either settled, cancelled or
    * resumed later by using the ResolveHoldForward endpoint.
    */
-  htlcInterceptor(args?: ForwardHtlcInterceptRequest): Duplex<ForwardHtlcInterceptResponse>;
+  htlcInterceptor(
+    args?: ForwardHtlcInterceptRequest
+  ): Duplex<ForwardHtlcInterceptResponse>;
 }
