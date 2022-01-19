@@ -1,15 +1,16 @@
-import { Readable } from '../streams';
+import { Readable } from "../streams";
+import { JsonBuffer } from "../general";
 
 export interface ConfRequest {
-  txid?: Buffer | string;
-  script?: Buffer | string;
+  txid?: Buffer | string | JsonBuffer;
+  script?: Buffer | string | JsonBuffer;
   numConfs?: number;
   heightHint?: number;
 }
 
 export interface ConfDetails {
-  rawTx: Buffer | string;
-  blockHash: Buffer | string;
+  rawTx: Buffer | string | JsonBuffer;
+  blockHash: Buffer | string | JsonBuffer;
   blockHeight: number;
   txIndex: number;
 }
@@ -20,20 +21,20 @@ export interface ConfEvent {
 }
 
 export interface Outpoint {
-  hash: Buffer | string;
+  hash: Buffer | string | JsonBuffer;
   index: number;
 }
 
 export interface SpendRequest {
   outpoint?: Outpoint;
-  script?: Buffer | string;
+  script?: Buffer | string | JsonBuffer;
   heightHint?: number;
 }
 
 export interface SpendDetails {
   spendingOutpoint?: Outpoint;
-  rawSpendingTx: Buffer | string;
-  spendingTxHash: Buffer | string;
+  rawSpendingTx: Buffer | string | JsonBuffer;
+  spendingTxHash: Buffer | string | JsonBuffer;
   spendingInputIndex: number;
   spendingHeight: number;
 }
@@ -44,7 +45,7 @@ export interface SpendEvent {
 }
 
 export interface BlockEpoch {
-  hash?: Buffer | string;
+  hash?: Buffer | string | JsonBuffer;
   height?: number;
 }
 

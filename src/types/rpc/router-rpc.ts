@@ -9,6 +9,7 @@ import {
   RouteHint,
   ChannelPoint,
 } from "./ln-rpc";
+import { JsonBuffer } from "../general";
 
 export enum HtlcEventType {
   UNKNOWN = 0,
@@ -66,10 +67,10 @@ export enum ResolveHoldForwardAction {
 }
 
 export interface SendPaymentRequest {
-  dest?: Buffer | string;
+  dest?: Buffer | string | JsonBuffer;
   amt?: number;
   amtMsat?: number;
-  paymentHash?: Buffer | string;
+  paymentHash?: Buffer | string | JsonBuffer;
   finalCltvDelta?: number;
   paymentRequest?: string;
   timeoutSeconds?: number;
@@ -77,7 +78,7 @@ export interface SendPaymentRequest {
   feeLimitMsat?: number;
   outgoingChanId?: string;
   outgoingChanIds?: number[];
-  lastHopPubkey?: Buffer | string;
+  lastHopPubkey?: Buffer | string | JsonBuffer;
   cltvLimit?: number;
   routeHints?: RouteHint[];
   destCustomRecords?: Array<[number, Buffer]> | string[];
@@ -88,12 +89,12 @@ export interface SendPaymentRequest {
 }
 
 export interface TrackPaymentRequest {
-  paymentHash: Buffer | string;
+  paymentHash: Buffer | string | JsonBuffer;
   noInflightUpdates?: boolean;
 }
 
 export interface RouteFeeRequest {
-  dest: Buffer | string;
+  dest: Buffer | string | JsonBuffer;
   amtSat: number;
 }
 
@@ -103,13 +104,13 @@ export interface RouteFeeResponse {
 }
 
 export interface SendToRouteReq {
-  paymentHash: Buffer | string;
+  paymentHash: Buffer | string | JsonBuffer;
   route?: Route;
 }
 
 export interface ChanUpdate {
-  signature: Buffer | string;
-  chainHash: Buffer | string;
+  signature: Buffer | string | JsonBuffer;
+  chainHash: Buffer | string | JsonBuffer;
   chanId: number;
   timestamp: number;
   messageFlags: number;
@@ -119,17 +120,17 @@ export interface ChanUpdate {
   baseFee: number;
   feeRate: number;
   htlcMaximumMsat: number;
-  extraOpaqueData: Buffer | string;
+  extraOpaqueData: Buffer | string | JsonBuffer;
 }
 
 export interface SendToRouteResponse {
-  preimage: Buffer | string;
+  preimage: Buffer | string | JsonBuffer;
   failure?: Failure;
 }
 
 export interface PairHistory {
-  nodeFrom: Buffer | string;
-  nodeTo: Buffer | string;
+  nodeFrom: Buffer | string | JsonBuffer;
+  nodeTo: Buffer | string | JsonBuffer;
   history?: PairData;
 }
 
@@ -143,8 +144,8 @@ export interface PairData {
 }
 
 export interface QueryProbabilityRequest {
-  fromNode?: Buffer | string;
-  toNode?: Buffer | string;
+  fromNode?: Buffer | string | JsonBuffer;
+  toNode?: Buffer | string | JsonBuffer;
   amtMsat?: number;
 }
 
@@ -201,7 +202,7 @@ export interface HtlcEvent {
 
 export interface PaymentStatusUpdate {
   state: PaymentState;
-  preimage?: Buffer | string;
+  preimage?: Buffer | string | JsonBuffer;
   htlcs: HTLCAttempt[];
 }
 
@@ -221,7 +222,7 @@ export interface ForwardHtlcInterceptRequest {
   incomingCircuitKey?: CircuitKey;
   incomingAmountMsat?: number;
   incomingExpiry?: number;
-  paymentHash?: Buffer | string;
+  paymentHash?: Buffer | string | JsonBuffer;
   outgoingRequestedChanId?: number;
   outgoingAmountMsat?: number;
   outgoingExpiry?: number;
@@ -231,7 +232,7 @@ export interface ForwardHtlcInterceptRequest {
 export interface ForwardHtlcInterceptResponse {
   incomingCircuitKey?: CircuitKey;
   action: ResolveHoldForwardAction;
-  preimage: Buffer | string;
+  preimage: Buffer | string | JsonBuffer;
 }
 
 /**

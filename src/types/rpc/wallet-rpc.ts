@@ -9,6 +9,7 @@ import {
   EstimateFeeRequest,
 } from "./ln-rpc";
 import { KeyDescriptor, KeyLocator, TxOut } from "./sign-rpc";
+import { JsonBuffer } from "../general";
 
 export enum WitnessType {
   UNKNOWN_WITNESS = 0,
@@ -43,7 +44,7 @@ export interface ListUnspentResp {
 }
 
 export interface LeaseOutputRequest {
-  id: Buffer | string;
+  id: Buffer | string | JsonBuffer;
   outpoint?: OutPoint;
 }
 
@@ -52,7 +53,7 @@ export interface LeaseOutputResponse {
 }
 
 export interface ReleaseOutputRequest {
-  id: Buffer | string;
+  id: Buffer | string | JsonBuffer;
   outpoint?: OutPoint;
   expirationSeconds: number;
 }
@@ -67,7 +68,7 @@ export interface AddrResponse {
 }
 
 export interface Tx {
-  txHex: Buffer | string;
+  txHex: Buffer | string | JsonBuffer;
   label?: string;
 }
 
@@ -84,7 +85,7 @@ export interface SendOutputsRequest {
 }
 
 export interface SendOutputsResponse {
-  rawTx: Buffer | string;
+  rawTx: Buffer | string | JsonBuffer;
 }
 
 export interface EstimateFeeReq {
@@ -135,7 +136,7 @@ export interface ListSweepsResponse {
 }
 
 export interface FundPsbtRequest {
-  psbt: Buffer | string;
+  psbt: Buffer | string | JsonBuffer;
   raw?: TxTemplate;
   targetConf: number;
   satPerVbyte: number;
@@ -157,7 +158,7 @@ export enum FundPsbtRequestFeesCase {
 }
 
 export interface FundPsbtResponse {
-  fundedPsbt: Buffer | string;
+  fundedPsbt: Buffer | string | JsonBuffer;
   changeOutputIndex: number;
   lockedUtxos: Array<UtxoLease>;
 }
@@ -168,41 +169,41 @@ export interface TxTemplate {
 }
 
 export interface UtxoLease {
-  id: Buffer | string;
+  id: Buffer | string | JsonBuffer;
   outpoint?: OutPoint;
   expiration: number;
 }
 
 export interface FinalizePsbtRequest {
-  fundedPsbt: Buffer | string;
+  fundedPsbt: Buffer | string | JsonBuffer;
   account: string;
 }
 
 export interface LabelTransactionRequest {
-  txid: Buffer | string;
+  txid: Buffer | string | JsonBuffer;
   label: string;
   overwrite?: boolean;
 }
 
 export interface FinalizePsbtResponse {
-  signedPsbt: Buffer | string;
-  rawFinalTx: Buffer | string;
+  signedPsbt: Buffer | string | JsonBuffer;
+  rawFinalTx: Buffer | string | JsonBuffer;
 }
 
 export interface UtxoLease {
-  id: Buffer | string;
+  id: Buffer | string | JsonBuffer;
   outpoint?: OutPoint;
   expiration: number;
 }
 
 export interface FundPsbtResponse {
-  fundedPsbt: Buffer | string;
+  fundedPsbt: Buffer | string | JsonBuffer;
   changeOutputIndex: number;
   lockedUtxos: Array<UtxoLease>;
 }
 
 export interface FinalizePsbtRequest {
-  fundedPsbt: Buffer | string;
+  fundedPsbt: Buffer | string | JsonBuffer;
   account: string;
 }
 
@@ -234,7 +235,7 @@ export interface Account {
   name: string;
   addressType: AddressType;
   extendedPublicKey: string;
-  masterKeyFingerprint: Buffer | string;
+  masterKeyFingerprint: Buffer | string | JsonBuffer;
   derivationPath: string;
   externalKeyCount: number;
   internalKeyCount: number;
@@ -248,7 +249,7 @@ export interface ListAccountsResponse {
 export interface ImportAccountRequest {
   name: string;
   extendedPublicKey: string;
-  masterKeyFingerprint: Buffer | string;
+  masterKeyFingerprint: Buffer | string | JsonBuffer;
   addressType: AddressType;
   dryRun: boolean;
 }
@@ -260,7 +261,7 @@ export interface ImportAccountResponse {
 }
 
 export interface ImportPublicKeyRequest {
-  publicKey: Buffer | string;
+  publicKey: Buffer | string | JsonBuffer;
   addressType: AddressType;
 }
 

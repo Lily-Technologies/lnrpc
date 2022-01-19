@@ -1,6 +1,7 @@
 import { Duplex, Readable } from "../streams";
 import { KeyDescriptor } from "./sign-rpc";
 import { EstimateFeeResponse } from "./wallet-rpc";
+import { JsonBuffer } from "../general";
 
 export enum AddressType {
   WITNESS_PUBKEY_HASH = 0,
@@ -248,7 +249,7 @@ export interface Peer {
   errors?: TimestampedError[];
   flapCount: number;
   lastFlapNs: number;
-  lastPingPayload: Buffer | string;
+  lastPingPayload: Buffer | string | JsonBuffer;
 }
 
 export interface PeerEvent {
@@ -268,7 +269,7 @@ export interface PendingHTLC {
 export interface HTLC {
   incoming: boolean;
   amount: string;
-  hashLock: Buffer | string;
+  hashLock: Buffer | string | JsonBuffer;
   expirationHeight: number;
   htlcIndex: number;
   forwardingChannel: number;
@@ -415,13 +416,13 @@ export interface Hop {
 }
 
 export interface MPPRecord {
-  paymentAddr?: Buffer | string;
+  paymentAddr?: Buffer | string | JsonBuffer;
   totalAmtMsat?: number;
 }
 
 export interface AMPRecord {
-  rootShare: Buffer | string;
-  setId: Buffer | string;
+  rootShare: Buffer | string | JsonBuffer;
+  setId: Buffer | string | JsonBuffer;
   childIndex: number;
 }
 
@@ -465,8 +466,8 @@ export interface Payment {
 }
 
 export interface ChannelUpdate {
-  signature: Buffer | string;
-  chainHash: Buffer | string;
+  signature: Buffer | string | JsonBuffer;
+  chainHash: Buffer | string | JsonBuffer;
   chanId: string;
   timestamp: number;
   messageFlags: number;
@@ -476,14 +477,14 @@ export interface ChannelUpdate {
   baseFee: number;
   feeRate: number;
   htlcMaximumMsat: number;
-  extraOpaqueData: Buffer | string;
+  extraOpaqueData: Buffer | string | JsonBuffer;
 }
 
 export interface Failure {
   code: FailureCode;
   channelUpdate?: ChannelUpdate;
   htlcMsat: number;
-  onionSha256: Buffer | string;
+  onionSha256: Buffer | string | JsonBuffer;
   cltvExpiry: number;
   flags: number;
   failureSourceIndex: number;
@@ -497,7 +498,7 @@ export interface HTLCAttempt {
   attemptTimeNs?: string;
   resolveTimeNs?: string;
   failure?: Failure;
-  preimage?: Buffer | string;
+  preimage?: Buffer | string | JsonBuffer;
 }
 
 export interface NodeAddress {
@@ -546,7 +547,7 @@ export interface ForwardingEvent {
 }
 
 export interface OutPoint {
-  txidBytes: Buffer | string;
+  txidBytes: Buffer | string | JsonBuffer;
   txidStr: string;
   outputIndex: number;
 }
@@ -650,7 +651,7 @@ export interface NewAddressResponse {
 }
 
 export interface SignMessageRequest {
-  msg: Buffer | string;
+  msg: Buffer | string | JsonBuffer;
   singleHash: boolean;
 }
 
@@ -659,7 +660,7 @@ export interface SignMessageResponse {
 }
 
 export interface VerifyMessageRequest {
-  msg: Buffer | string;
+  msg: Buffer | string | JsonBuffer;
   signature: string;
 }
 
@@ -736,7 +737,7 @@ export interface ListChannelsRequest {
   inactiveOnly?: boolean;
   publicOnly?: boolean;
   privateOnly?: boolean;
-  peer?: Buffer | string;
+  peer?: Buffer | string | JsonBuffer;
 }
 
 export interface ListChannelsResponse {
@@ -758,7 +759,7 @@ export interface ClosedChannelsResponse {
 
 export interface OpenChannelRequest {
   satPerVbyte: number;
-  nodePubkey?: Buffer | string;
+  nodePubkey?: Buffer | string | JsonBuffer;
   nodePubkeyString?: string;
   localFundingAmount?: string;
   pushSat?: string;
@@ -778,14 +779,14 @@ export interface OpenChannelRequest {
 }
 
 export interface BatchOpenChannel {
-  nodePubkey: Buffer | string;
+  nodePubkey: Buffer | string | JsonBuffer;
   localFundingAmount: number;
   pushSat: number;
   pb_private: boolean;
   minHtlcMsat: number;
   remoteCsvDelay: number;
   closeAddress: string;
-  pendingChanId: Buffer | string;
+  pendingChanId: Buffer | string | JsonBuffer;
   commitmentType: CommitmentType;
 }
 
@@ -803,7 +804,7 @@ export interface BatchOpenChannelResponse {
 }
 
 export interface PendingUpdate {
-  txid: Buffer | string;
+  txid: Buffer | string | JsonBuffer;
   outputIndex: number;
 }
 
@@ -814,28 +815,28 @@ export interface ChannelOpenUpdate {
 export interface ReadyForPsbtFunding {
   fundingAddress: string;
   fundingAmount: number;
-  psbt: Buffer | string;
+  psbt: Buffer | string | JsonBuffer;
 }
 
 export interface OpenStatusUpdate {
   chanPending?: PendingUpdate;
   chanOpen?: ChannelOpenUpdate;
   psbtFund?: ReadyForPsbtFunding;
-  pendingChanId?: Buffer | string;
+  pendingChanId?: Buffer | string | JsonBuffer;
 }
 
 export interface ChanPointShim {
   amt: number;
   chanPoint?: ChannelPoint;
   localKey?: KeyDescriptor;
-  remoteKey?: Buffer | string;
-  pendingChanId?: Buffer | string;
+  remoteKey?: Buffer | string | JsonBuffer;
+  pendingChanId?: Buffer | string | JsonBuffer;
   thawHeight: number;
 }
 
 export interface PsbtShim {
-  pendingChanId: Buffer | string;
-  basePsbt: Buffer | string;
+  pendingChanId: Buffer | string | JsonBuffer;
+  basePsbt: Buffer | string | JsonBuffer;
   noPublish?: boolean;
 }
 
@@ -845,19 +846,19 @@ export interface FundingShim {
 }
 
 export interface FundingShimCancel {
-  pendingChanId: Buffer | string;
+  pendingChanId: Buffer | string | JsonBuffer;
 }
 
 export interface FundingPsbtVerify {
-  fundedPsbt: Buffer | string;
-  pendingChanId: Buffer | string;
+  fundedPsbt: Buffer | string | JsonBuffer;
+  pendingChanId: Buffer | string | JsonBuffer;
   skipFinalize: boolean;
 }
 
 export interface FundingPsbtFinalize {
-  signedPsbt: Buffer | string;
-  pendingChanId: Buffer | string;
-  finalRawTx?: Buffer | string;
+  signedPsbt: Buffer | string | JsonBuffer;
+  pendingChanId: Buffer | string | JsonBuffer;
+  finalRawTx?: Buffer | string | JsonBuffer;
 }
 
 export interface FundingTransitionMsg {
@@ -868,7 +869,7 @@ export interface FundingTransitionMsg {
 }
 
 export interface ChannelPoint {
-  fundingTxidBytes?: Buffer | string;
+  fundingTxidBytes?: Buffer | string | JsonBuffer;
   fundingTxidStr?: string;
   outputIndex: number;
 }
@@ -882,7 +883,7 @@ export interface CloseChannelRequest {
 }
 
 export interface ChannelCloseUpdate {
-  closingTxid: Buffer | string;
+  closingTxid: Buffer | string | JsonBuffer;
   success: boolean;
 }
 
@@ -898,41 +899,41 @@ export interface AbandonChannelRequest {
 }
 
 export interface SendRequest {
-  dest?: Buffer | string;
+  dest?: Buffer | string | JsonBuffer;
   destString?: string;
   amt?: string;
   amtMsat?: number;
-  paymentHash?: Buffer | string;
+  paymentHash?: Buffer | string | JsonBuffer;
   paymentHashString?: string;
   paymentRequest?: string;
   finalCltvDelta?: number;
   feeLimit?: FeeLimit;
   outgoingChanId?: string;
-  lastHopPubkey?: Buffer | string;
+  lastHopPubkey?: Buffer | string | JsonBuffer;
   cltvLimit?: number;
   destCustomRecords?: Array<[number, Buffer]> | string[];
   allowSelfPayment?: boolean;
   destFeatures?: FeatureBit[];
-  paymentAddr: Buffer | string;
+  paymentAddr: Buffer | string | JsonBuffer;
 }
 
 export interface SendResponse {
   paymentError: string;
-  paymentPreimage: Buffer | string;
+  paymentPreimage: Buffer | string | JsonBuffer;
   paymentRoute?: Route;
-  paymentHash: Buffer | string;
+  paymentHash: Buffer | string | JsonBuffer;
 }
 
 export interface SendToRouteRequest {
-  paymentHash?: Buffer | string;
+  paymentHash?: Buffer | string | JsonBuffer;
   paymentHashString?: string;
   route?: Route;
 }
 
 export interface ChannelAcceptRequest {
-  nodePubkey?: Buffer | string;
-  chainHash?: Buffer | string;
-  pendingChanId?: Buffer | string;
+  nodePubkey?: Buffer | string | JsonBuffer;
+  chainHash?: Buffer | string | JsonBuffer;
+  pendingChanId?: Buffer | string | JsonBuffer;
   fundingAmt?: string;
   pushAmt?: string;
   dustLimit?: string;
@@ -948,7 +949,7 @@ export interface ChannelAcceptRequest {
 
 export interface ChannelAcceptResponse {
   accept: boolean;
-  pendingChanId: Buffer | string;
+  pendingChanId: Buffer | string | JsonBuffer;
   error: string;
   upfrontShutdown: string;
   csvDelay: number;
@@ -966,16 +967,16 @@ export interface Chain {
 
 export interface Invoice {
   memo?: string;
-  receipt?: Buffer | string;
-  rPreimage?: Buffer | string;
-  rHash?: Buffer | string;
+  receipt?: Buffer | string | JsonBuffer;
+  rPreimage?: Buffer | string | JsonBuffer;
+  rHash?: Buffer | string | JsonBuffer;
   value?: string;
   valueMsat?: string;
   settled?: boolean;
   creationDate?: string;
   settleDate?: string;
   paymentRequest?: string;
-  descriptionHash?: Buffer | string;
+  descriptionHash?: Buffer | string | JsonBuffer;
   expiry?: string;
   fallbackAddr?: string;
   cltvExpiry?: string;
@@ -990,7 +991,7 @@ export interface Invoice {
   htlcs?: InvoiceHTLC[];
   features?: Array<[number, Feature]>;
   isKeysend?: boolean;
-  paymentAddr?: Buffer | string;
+  paymentAddr?: Buffer | string | JsonBuffer;
   isAmp?: boolean;
   ampInvoiceState?: Array<[string, AMPInvoiceState]>;
 }
@@ -1010,18 +1011,18 @@ export interface InvoiceHTLC {
 }
 
 export interface AMP {
-  rootShare: Buffer | string;
-  setId: Buffer | string;
+  rootShare: Buffer | string | JsonBuffer;
+  setId: Buffer | string | JsonBuffer;
   childIndex: number;
-  hash: Buffer | string;
-  preimage: Buffer | string;
+  hash: Buffer | string | JsonBuffer;
+  preimage: Buffer | string | JsonBuffer;
 }
 
 export interface AddInvoiceResponse {
-  rHash: Buffer | string;
+  rHash: Buffer | string | JsonBuffer;
   paymentRequest: string;
   addIndex: string;
-  paymentAddr: Buffer | string;
+  paymentAddr: Buffer | string | JsonBuffer;
 }
 
 export interface ListInvoiceRequest {
@@ -1039,7 +1040,7 @@ export interface ListInvoiceResponse {
 
 export interface PaymentHash {
   rHashStr?: string;
-  rHash?: Buffer | string;
+  rHash?: Buffer | string | JsonBuffer;
 }
 
 export interface InvoiceSubscription {
@@ -1062,7 +1063,7 @@ export interface PayReq {
   fallbackAddr: string;
   cltvExpiry: string;
   routeHints?: RouteHint[];
-  paymentAddr?: Buffer | string;
+  paymentAddr?: Buffer | string | JsonBuffer;
   numMsat?: string;
   features?: Array<[number, Feature]>;
 }
@@ -1087,7 +1088,7 @@ export interface ListPaymentsResponse {
 }
 
 export interface DeletePaymentRequest {
-  paymentHash: Buffer | string;
+  paymentHash: Buffer | string | JsonBuffer;
   failedHtlcsOnly: boolean;
 }
 
@@ -1109,7 +1110,7 @@ export interface NodeUpdate {
 }
 
 export interface SetID {
-  setId: Buffer | string;
+  setId: Buffer | string | JsonBuffer;
 }
 
 export interface AMPInvoiceState {
@@ -1179,17 +1180,17 @@ export interface EdgeLocator {
 
 export interface ChannelBackup {
   chanPoint?: ChannelPoint;
-  chanBackup: Buffer | string;
+  chanBackup: Buffer | string | JsonBuffer;
 }
 
 export interface MultiChanBackup {
   chanPoints: ChannelPoint[];
-  multiChanBackup: Buffer | string;
+  multiChanBackup: Buffer | string | JsonBuffer;
 }
 
 export interface RestoreChanBackupRequest {
   chanBackups?: ChannelBackups;
-  multiChanBackup: Buffer | string;
+  multiChanBackup: Buffer | string | JsonBuffer;
 }
 
 export interface MacaroonPermission {
@@ -1235,7 +1236,7 @@ export interface Op {
 }
 
 export interface CheckMacPermRequest {
-  macaroon: Buffer | string;
+  macaroon: Buffer | string | JsonBuffer;
   permissions: Array<MacaroonPermission>;
   fullmethod: string;
 }
@@ -1246,7 +1247,7 @@ export interface CheckMacPermResponse {
 
 export interface RPCMiddlewareRequest {
   requestId: number;
-  rawMacaroon: Buffer | string;
+  rawMacaroon: Buffer | string | JsonBuffer;
   customCaveatCondition: string;
   streamAuth?: StreamAuth;
   request?: RPCMessage;
@@ -1269,7 +1270,7 @@ export interface MiddlewareRegistration {
 export interface InterceptFeedback {
   error: string;
   replaceResponse: boolean;
-  replacementSerialized: Buffer | string;
+  replacementSerialized: Buffer | string | JsonBuffer;
 }
 
 export enum MiddlewareMessageCase {
@@ -1286,12 +1287,12 @@ export interface RPCMessage {
   methodFullUri: string;
   streamRpc: boolean;
   typeName: string;
-  serialized: Buffer | string;
+  serialized: Buffer | string | JsonBuffer;
 }
 
 export interface MacaroonId {
-  nonce: Buffer | string;
-  storageid: Buffer | string;
+  nonce: Buffer | string | JsonBuffer;
+  storageid: Buffer | string | JsonBuffer;
   ops: Op[];
 }
 
@@ -1336,7 +1337,7 @@ export interface QueryRoutesRequest {
   cltvLimit?: number;
   destCustomRecords?: Array<[number, Buffer]> | string[];
   outgoingChanId?: string;
-  lastHopPubkey?: Buffer | string;
+  lastHopPubkey?: Buffer | string | JsonBuffer;
   routeHints?: RouteHint[];
   destFeatures?: FeatureBit[];
 }
@@ -1347,8 +1348,8 @@ export interface QueryRoutesResponse {
 }
 
 export interface NodePair {
-  from?: Buffer | string;
-  to?: Buffer | string;
+  from?: Buffer | string | JsonBuffer;
+  to?: Buffer | string | JsonBuffer;
 }
 
 export interface NetworkInfo {

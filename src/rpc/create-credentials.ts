@@ -1,7 +1,7 @@
-import { ChannelCredentials } from '@grpc/grpc-js';
-import fs from 'fs';
-import { promisify } from 'util';
-import { RpcClientConfig } from '../types';
+import { ChannelCredentials } from "@grpc/grpc-js";
+import fs from "fs";
+import { promisify } from "util";
+import { RpcClientConfig } from "../types";
 
 const readFile = promisify(fs.readFile);
 
@@ -10,7 +10,9 @@ const readFile = promisify(fs.readFile);
  * credentials if necessary.
  * @param config The rpc client configuration
  */
-export async function createCredentials(config: RpcClientConfig): Promise<ChannelCredentials> {
+export async function createCredentials(
+  config: RpcClientConfig
+): Promise<ChannelCredentials> {
   let credentials: ChannelCredentials;
   const { grpc } = config;
 
@@ -19,30 +21,31 @@ export async function createCredentials(config: RpcClientConfig): Promise<Channe
     let { cert } = config;
     const { certEncoding, tls } = config;
 
-      // Fallback optional .tls file path
+    // Fallback optional .tls file path
     if (!cert && tls) {
-        cert = await readFile(tls);
-      }
+      cert = await readFile(tls);
+    }
 
-      // Convert `cert` string to Buffer
+    // Convert `cert` string to Buffer
     if (cert && !Buffer.isBuffer(cert)) {
-        cert = Buffer.from(cert, certEncoding);
-      }
+      // @ts-ignore JsonArray case
+      cert = Buffer.from(cert, certEncoding);
+    }
 
-      // Required for lnd SSL handshake when a cert is provided:
-      // (SSL_ERROR_SSL: error:14094410)
-      // More about GRPC environment variables here:
-      // https://grpc.io/grpc/core/md_doc_environment_variables.html
+    // Required for lnd SSL handshake when a cert is provided:
+    // (SSL_ERROR_SSL: error:14094410)
+    // More about GRPC environment variables here:
+    // https://grpc.io/grpc/core/md_doc_environment_variables.html
     if (cert && !process.env.GRPC_SSL_CIPHER_SUITES) {
-        process.env.GRPC_SSL_CIPHER_SUITES = 'HIGH+ECDSA';
-      }
+      process.env.GRPC_SSL_CIPHER_SUITES = "HIGH+ECDSA";
+    }
 
-      // NOTE: cert may be undefined at this point
-      // which is desirable for when certificate pinning
-      // is not necessary (i.e. BTCPayServer connection)
+    // NOTE: cert may be undefined at this point
+    // which is desirable for when certificate pinning
+    // is not necessary (i.e. BTCPayServer connection)
     credentials = grpc.credentials.createSsl(cert as Buffer);
   } catch (e) {
-    if (!e.code) e.code = 'INVALID_SSL_CERT';
+    if (!e.code) e.code = "INVALID_SSL_CERT";
     throw e;
   }
 
@@ -54,15 +57,16 @@ export async function createCredentials(config: RpcClientConfig): Promise<Channe
     // Add hex encoded macaroon
     // to gRPC metadata
     metadata.add(
-      'macaroon',
-      Buffer.isBuffer(macaroon) ? macaroon.toString('hex') : macaroon,
+      "macaroon",
+      // @ts-ignore JsonBuffer case
+      Buffer.isBuffer(macaroon) ? macaroon.toString("hex") : macaroon
     );
 
     // Create macaroon credentials
     const macaroonCredentials = grpc.credentials.createFromMetadataGenerator(
       (_, callback) => {
         callback(null, metadata);
-      },
+      }
     );
 
     // Update existing cert credentials by combining macaroon auth
@@ -70,7 +74,7 @@ export async function createCredentials(config: RpcClientConfig): Promise<Channe
     // authenticated
     credentials = grpc.credentials.combineChannelCredentials(
       credentials,
-      macaroonCredentials,
+      macaroonCredentials
     );
   }
   return credentials;

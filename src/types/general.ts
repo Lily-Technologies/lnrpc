@@ -1,9 +1,14 @@
-import grpc, { ChannelCredentials, Client } from '@grpc/grpc-js';
-import * as grpcLoader from '@grpc/proto-loader';
+import grpc, { ChannelCredentials, Client } from "@grpc/grpc-js";
+import * as grpcLoader from "@grpc/proto-loader";
 
 export type GrpcLoader = typeof grpcLoader;
 
 export type Grpc = typeof grpc;
+
+export interface JsonBuffer {
+  type: "Buffer";
+  data: number[];
+}
 
 export interface NestedGrpcObject {
   [index: string]: {
@@ -33,9 +38,9 @@ export interface GrpcObjectConfig {
 export interface RpcClientConfig {
   server?: string; // URL for the lightning node to connect to ie. localhost:10009
   tls?: string | false; // /path/to/tls.cert or false to disable certificate pinning
-  cert?: Buffer | string; // string or buffer representation of tls.cert
+  cert?: Buffer | string | JsonBuffer; // string or buffer representation of tls.cert
   macaroonPath?: string;
-  macaroon?: Buffer | string; // hex-encoded string of macaroon file
+  macaroon?: Buffer | string | JsonBuffer; // hex-encoded string of macaroon file
   certEncoding?: string; // Default to utf-8
   grpcLoader?: GrpcLoader;
   grpc?: Grpc;

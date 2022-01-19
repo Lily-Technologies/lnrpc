@@ -1,15 +1,17 @@
+import { JsonBuffer } from "../general";
+
 export enum PolicyType {
   LEGACY = 0,
   ANCHOR = 1,
 }
 
 export interface AddTowerRequest {
-  pubkey: Buffer | string;
+  pubkey: Buffer | string | JsonBuffer;
   address?: string;
 }
 
 export interface RemoveTowerRequest {
-  pubkey: Buffer | string;
+  pubkey: Buffer | string | JsonBuffer;
   address?: string;
 }
 
@@ -26,7 +28,7 @@ export interface TowerSession {
 }
 
 export interface Tower {
-  pubkey: Buffer | string;
+  pubkey: Buffer | string | JsonBuffer;
   addresses: string;
   activeSessionCandidate: boolean;
   numSessions: number;
@@ -38,7 +40,7 @@ export interface ListTowersResponse {
 }
 
 export interface GetTowerInfoRequest {
-  pubkey: Buffer | string;
+  pubkey: Buffer | string | JsonBuffer;
   includeSessions?: boolean;
 }
 

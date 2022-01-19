@@ -1,5 +1,6 @@
+import { JsonBuffer } from "../general";
 export interface GetInfoResp {
-  pubkey: Buffer | string;
+  pubkey: Buffer | string | JsonBuffer;
   listeners: string[];
   uris: string[];
 }

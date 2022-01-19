@@ -1,19 +1,20 @@
 import { ChanBackupSnapshot } from "./ln-rpc";
+import { JsonBuffer } from "../general";
 
 export interface GenSeedRequest {
-  aezeedPassphrase?: Buffer | string;
-  seedEntropy?: Buffer | string;
+  aezeedPassphrase?: Buffer | string | JsonBuffer;
+  seedEntropy?: Buffer | string | JsonBuffer;
 }
 
 export interface GenSeedResponse {
   cipherSeedMnemonic: string[];
-  encipheredSeed: Buffer | string;
+  encipheredSeed: Buffer | string | JsonBuffer;
 }
 
 export interface InitWalletRequest {
-  walletPassword: Buffer | string;
+  walletPassword: Buffer | string | JsonBuffer;
   cipherSeedMnemonic: string[];
-  aezeedPassphrase?: Buffer | string;
+  aezeedPassphrase?: Buffer | string | JsonBuffer;
   recoveryWindow?: number;
   channelBackups?: ChanBackupSnapshot;
   statelessInit: boolean;
@@ -24,7 +25,7 @@ export interface InitWalletRequest {
 
 export interface WatchOnly {
   masterKeyBirthdayTimestamp: number;
-  masterKeyFingerprint: Buffer | string;
+  masterKeyFingerprint: Buffer | string | JsonBuffer;
   accounts: Array<WatchOnlyAccount>;
 }
 
@@ -36,19 +37,19 @@ export interface WatchOnlyAccount {
 }
 
 export interface UnlockWalletRequest {
-  walletPassword: Buffer | string;
+  walletPassword: Buffer | string | JsonBuffer;
   recoveryWindow?: number;
   channelBackups?: ChanBackupSnapshot;
   statelessInit: boolean;
 }
 
 export interface ChangePasswordResponse {
-  adminMacaroon: Buffer | string;
+  adminMacaroon: Buffer | string | JsonBuffer;
 }
 
 export interface ChangePasswordRequest {
-  currentPassword: Buffer | string;
-  newPassword: Buffer | string;
+  currentPassword: Buffer | string | JsonBuffer;
+  newPassword: Buffer | string | JsonBuffer;
 }
 
 /**

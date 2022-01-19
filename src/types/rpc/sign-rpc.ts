@@ -1,30 +1,31 @@
+import { JsonBuffer } from "../general";
 export interface KeyLocator {
   keyFamily: number;
   keyIndex: number;
 }
 
 export interface KeyDescriptor {
-  rawKeyBytes: Buffer | string;
+  rawKeyBytes: Buffer | string | JsonBuffer;
   keyLoc?: KeyLocator;
 }
 
 export interface TxOut {
   value: number;
-  pkScript: Buffer | string;
+  pkScript: Buffer | string | JsonBuffer;
 }
 
 export interface SignDescriptor {
   keyDesc?: KeyDescriptor;
-  singleTweak?: Buffer | string;
-  doubleTweak?: Buffer | string;
-  witnessScript?: Buffer | string;
+  singleTweak?: Buffer | string | JsonBuffer;
+  doubleTweak?: Buffer | string | JsonBuffer;
+  witnessScript?: Buffer | string | JsonBuffer;
   output?: TxOut;
   sighash?: number;
   inputIndex?: number;
 }
 
 export interface SignReq {
-  rawTxBytes?: Buffer | string;
+  rawTxBytes?: Buffer | string | JsonBuffer;
   signDescs?: SignDescriptor[];
 }
 
@@ -34,7 +35,7 @@ export interface SignResp {
 
 export interface InputScript {
   witness: Array<Buffer | string>;
-  sigScript: Buffer | string;
+  sigScript: Buffer | string | JsonBuffer;
 }
 
 export interface InputScriptResp {
@@ -42,20 +43,20 @@ export interface InputScriptResp {
 }
 
 export interface SignMessageReq {
-  msg: Buffer | string;
+  msg: Buffer | string | JsonBuffer;
   keyLoc?: KeyLocator;
   doubleHash: boolean;
   compactSig: boolean;
 }
 
 export interface SignMessageResp {
-  signature: Buffer | string;
+  signature: Buffer | string | JsonBuffer;
 }
 
 export interface VerifyMessageReq {
-  msg: Buffer | string;
-  signature: Buffer | string;
-  pubkey: Buffer | string;
+  msg: Buffer | string | JsonBuffer;
+  signature: Buffer | string | JsonBuffer;
+  pubkey: Buffer | string | JsonBuffer;
 }
 
 export interface VerifyMessageResp {
@@ -63,13 +64,13 @@ export interface VerifyMessageResp {
 }
 
 export interface SharedKeyRequest {
-  ephemeralPubkey: Buffer | string;
+  ephemeralPubkey: Buffer | string | JsonBuffer;
   keyLoc?: KeyLocator;
   keyDesc?: KeyDescriptor;
 }
 
 export interface SharedKeyResponse {
-  sharedKey: Buffer | string;
+  sharedKey: Buffer | string | JsonBuffer;
 }
 
 /**

@@ -1,5 +1,6 @@
 import { Readable } from "../streams";
 import { Invoice, RouteHint } from "./ln-rpc";
+import { JsonBuffer } from "../general";
 
 export enum LookupModifier {
   DEFAULT = 0,
@@ -8,19 +9,19 @@ export enum LookupModifier {
 }
 
 export interface SubscribeSingleInvoiceRequest {
-  rHash: Buffer | string;
+  rHash: Buffer | string | JsonBuffer;
 }
 
 export interface CancelInvoiceMsg {
-  paymentHash: Buffer | string;
+  paymentHash: Buffer | string | JsonBuffer;
 }
 
 export interface AddHoldInvoiceRequest {
   memo?: string;
-  hash?: Buffer | string;
+  hash?: Buffer | string | JsonBuffer;
   value?: number;
   valueMsat?: number;
-  descriptionHash?: Buffer | string;
+  descriptionHash?: Buffer | string | JsonBuffer;
   expiry?: number;
   fallbackAddr?: string;
   cltvExpiry?: number;
@@ -33,13 +34,13 @@ export interface AddHoldInvoiceResp {
 }
 
 export interface SettleInvoiceMsg {
-  preimage: Buffer | string;
+  preimage: Buffer | string | JsonBuffer;
 }
 
 export interface LookupInvoiceMsg {
-  paymentHash: Buffer | string;
-  paymentAddr: Buffer | string;
-  setId: Buffer | string;
+  paymentHash: Buffer | string | JsonBuffer;
+  paymentAddr: Buffer | string | JsonBuffer;
+  setId: Buffer | string | JsonBuffer;
   lookupModifier: LookupModifier;
 }
 
