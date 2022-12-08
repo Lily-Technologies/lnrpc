@@ -2,6 +2,7 @@ import { Duplex, Readable } from "../streams";
 import { KeyDescriptor } from "./sign-rpc";
 import { EstimateFeeResponse } from "./wallet-rpc";
 import { JsonBuffer } from "../general";
+import { DeleteMacaroonIDRequest } from "../generated/lightning_pb";
 
 export enum AddressType {
   WITNESS_PUBKEY_HASH = 0,
@@ -1792,6 +1793,20 @@ export interface LnRpc {
    * offline.
    */
   bakeMacaroon(args: BakeMacaroonRequest): Promise<BakeMacaroonResponse>;
+
+  /**
+   *  ListMacaroonIDs returns all root key IDs that are in use.
+   */
+  listMacaroonIds(
+    args: ListMacaroonIDsRequest
+  ): Promise<ListMacaroonIDsResponse>;
+
+  /**
+   *  deleteMacaroonId deletes the specified macaroon ID and invalidates all macaroons derived from that ID.
+   */
+  deleteMacaroonId(
+    args: DeleteMacaroonIDRequest
+  ): Promise<DeleteMacaroonIDResponse>;
 
   /**
    * listPermissions lists all RPC method URIs and their required macaroon

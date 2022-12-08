@@ -84,6 +84,9 @@ export class SendPaymentRequest extends jspb.Message {
   getAmp(): boolean;
   setAmp(value: boolean): void;
 
+  getTimePref(): number;
+  setTimePref(value: number): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SendPaymentRequest.AsObject;
   static toObject(includeInstance: boolean, msg: SendPaymentRequest): SendPaymentRequest.AsObject;
@@ -118,6 +121,7 @@ export namespace SendPaymentRequest {
     noInflightUpdates: boolean,
     maxShardSizeMsat: number,
     amp: boolean,
+    timePref: number,
   }
 }
 
@@ -208,6 +212,9 @@ export class SendToRouteRequest extends jspb.Message {
   getRoute(): lightning_pb.Route | undefined;
   setRoute(value?: lightning_pb.Route): void;
 
+  getSkipTempErr(): boolean;
+  setSkipTempErr(value: boolean): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): SendToRouteRequest.AsObject;
   static toObject(includeInstance: boolean, msg: SendToRouteRequest): SendToRouteRequest.AsObject;
@@ -222,6 +229,7 @@ export namespace SendToRouteRequest {
   export type AsObject = {
     paymentHash: Uint8Array | string,
     route?: lightning_pb.Route.AsObject,
+    skipTempErr: boolean,
   }
 }
 
@@ -329,6 +337,9 @@ export class XImportMissionControlRequest extends jspb.Message {
   setPairsList(value: Array<PairHistory>): void;
   addPairs(value?: PairHistory, index?: number): PairHistory;
 
+  getForce(): boolean;
+  setForce(value: boolean): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): XImportMissionControlRequest.AsObject;
   static toObject(includeInstance: boolean, msg: XImportMissionControlRequest): XImportMissionControlRequest.AsObject;
@@ -342,6 +353,7 @@ export class XImportMissionControlRequest extends jspb.Message {
 export namespace XImportMissionControlRequest {
   export type AsObject = {
     pairs: Array<PairHistory.AsObject>,
+    force: boolean,
   }
 }
 
@@ -1020,6 +1032,14 @@ export class ForwardHtlcInterceptResponse extends jspb.Message {
   getPreimage_asB64(): string;
   setPreimage(value: Uint8Array | string): void;
 
+  getFailureMessage(): Uint8Array | string;
+  getFailureMessage_asU8(): Uint8Array;
+  getFailureMessage_asB64(): string;
+  setFailureMessage(value: Uint8Array | string): void;
+
+  getFailureCode(): lightning_pb.Failure.FailureCodeMap[keyof lightning_pb.Failure.FailureCodeMap];
+  setFailureCode(value: lightning_pb.Failure.FailureCodeMap[keyof lightning_pb.Failure.FailureCodeMap]): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ForwardHtlcInterceptResponse.AsObject;
   static toObject(includeInstance: boolean, msg: ForwardHtlcInterceptResponse): ForwardHtlcInterceptResponse.AsObject;
@@ -1035,6 +1055,8 @@ export namespace ForwardHtlcInterceptResponse {
     incomingCircuitKey?: CircuitKey.AsObject,
     action: ResolveHoldForwardActionMap[keyof ResolveHoldForwardActionMap],
     preimage: Uint8Array | string,
+    failureMessage: Uint8Array | string,
+    failureCode: lightning_pb.Failure.FailureCodeMap[keyof lightning_pb.Failure.FailureCodeMap],
   }
 }
 

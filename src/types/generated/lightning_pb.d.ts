@@ -141,6 +141,46 @@ export namespace Utxo {
   }
 }
 
+export class OutputDetail extends jspb.Message {
+  getOutputType(): OutputScriptTypeMap[keyof OutputScriptTypeMap];
+  setOutputType(value: OutputScriptTypeMap[keyof OutputScriptTypeMap]): void;
+
+  getAddress(): string;
+  setAddress(value: string): void;
+
+  getPkScript(): string;
+  setPkScript(value: string): void;
+
+  getOutputIndex(): number;
+  setOutputIndex(value: number): void;
+
+  getAmount(): number;
+  setAmount(value: number): void;
+
+  getIsOurAddress(): boolean;
+  setIsOurAddress(value: boolean): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): OutputDetail.AsObject;
+  static toObject(includeInstance: boolean, msg: OutputDetail): OutputDetail.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: OutputDetail, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): OutputDetail;
+  static deserializeBinaryFromReader(message: OutputDetail, reader: jspb.BinaryReader): OutputDetail;
+}
+
+export namespace OutputDetail {
+  export type AsObject = {
+    outputType: OutputScriptTypeMap[keyof OutputScriptTypeMap],
+    address: string,
+    pkScript: string,
+    outputIndex: number,
+    amount: number,
+    isOurAddress: boolean,
+  }
+}
+
 export class Transaction extends jspb.Message {
   getTxHash(): string;
   setTxHash(value: string): void;
@@ -168,11 +208,21 @@ export class Transaction extends jspb.Message {
   setDestAddressesList(value: Array<string>): void;
   addDestAddresses(value: string, index?: number): string;
 
+  clearOutputDetailsList(): void;
+  getOutputDetailsList(): Array<OutputDetail>;
+  setOutputDetailsList(value: Array<OutputDetail>): void;
+  addOutputDetails(value?: OutputDetail, index?: number): OutputDetail;
+
   getRawTxHex(): string;
   setRawTxHex(value: string): void;
 
   getLabel(): string;
   setLabel(value: string): void;
+
+  clearPreviousOutpointsList(): void;
+  getPreviousOutpointsList(): Array<PreviousOutPoint>;
+  setPreviousOutpointsList(value: Array<PreviousOutPoint>): void;
+  addPreviousOutpoints(value?: PreviousOutPoint, index?: number): PreviousOutPoint;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Transaction.AsObject;
@@ -194,8 +244,10 @@ export namespace Transaction {
     timeStamp: number,
     totalFees: number,
     destAddresses: Array<string>,
+    outputDetails: Array<OutputDetail.AsObject>,
     rawTxHex: string,
     label: string,
+    previousOutpoints: Array<PreviousOutPoint.AsObject>,
   }
 }
 
@@ -501,6 +553,12 @@ export class ChannelAcceptRequest extends jspb.Message {
   getCommitmentType(): CommitmentTypeMap[keyof CommitmentTypeMap];
   setCommitmentType(value: CommitmentTypeMap[keyof CommitmentTypeMap]): void;
 
+  getWantsZeroConf(): boolean;
+  setWantsZeroConf(value: boolean): void;
+
+  getWantsScidAlias(): boolean;
+  setWantsScidAlias(value: boolean): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ChannelAcceptRequest.AsObject;
   static toObject(includeInstance: boolean, msg: ChannelAcceptRequest): ChannelAcceptRequest.AsObject;
@@ -527,6 +585,8 @@ export namespace ChannelAcceptRequest {
     maxAcceptedHtlcs: number,
     channelFlags: number,
     commitmentType: CommitmentTypeMap[keyof CommitmentTypeMap],
+    wantsZeroConf: boolean,
+    wantsScidAlias: boolean,
   }
 }
 
@@ -563,6 +623,9 @@ export class ChannelAcceptResponse extends jspb.Message {
   getMinAcceptDepth(): number;
   setMinAcceptDepth(value: number): void;
 
+  getZeroConf(): boolean;
+  setZeroConf(value: boolean): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ChannelAcceptResponse.AsObject;
   static toObject(includeInstance: boolean, msg: ChannelAcceptResponse): ChannelAcceptResponse.AsObject;
@@ -585,6 +648,7 @@ export namespace ChannelAcceptResponse {
     maxHtlcCount: number,
     minHtlcIn: number,
     minAcceptDepth: number,
+    zeroConf: boolean,
   }
 }
 
@@ -656,6 +720,30 @@ export namespace OutPoint {
     txidBytes: Uint8Array | string,
     txidStr: string,
     outputIndex: number,
+  }
+}
+
+export class PreviousOutPoint extends jspb.Message {
+  getOutpoint(): string;
+  setOutpoint(value: string): void;
+
+  getIsOurOutput(): boolean;
+  setIsOurOutput(value: boolean): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PreviousOutPoint.AsObject;
+  static toObject(includeInstance: boolean, msg: PreviousOutPoint): PreviousOutPoint.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: PreviousOutPoint, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PreviousOutPoint;
+  static deserializeBinaryFromReader(message: PreviousOutPoint, reader: jspb.BinaryReader): PreviousOutPoint;
+}
+
+export namespace PreviousOutPoint {
+  export type AsObject = {
+    outpoint: string,
+    isOurOutput: boolean,
   }
 }
 
@@ -1332,6 +1420,17 @@ export class Channel extends jspb.Message {
   getRemoteConstraints(): ChannelConstraints | undefined;
   setRemoteConstraints(value?: ChannelConstraints): void;
 
+  clearAliasScidsList(): void;
+  getAliasScidsList(): Array<number>;
+  setAliasScidsList(value: Array<number>): void;
+  addAliasScids(value: number, index?: number): number;
+
+  getZeroConf(): boolean;
+  setZeroConf(value: boolean): void;
+
+  getZeroConfConfirmedScid(): number;
+  setZeroConfConfirmedScid(value: number): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Channel.AsObject;
   static toObject(includeInstance: boolean, msg: Channel): Channel.AsObject;
@@ -1374,6 +1473,9 @@ export namespace Channel {
     thawHeight: number,
     localConstraints?: ChannelConstraints.AsObject,
     remoteConstraints?: ChannelConstraints.AsObject,
+    aliasScids: Array<number>,
+    zeroConf: boolean,
+    zeroConfConfirmedScid: number,
   }
 }
 
@@ -1437,6 +1539,70 @@ export namespace ListChannelsResponse {
   }
 }
 
+export class AliasMap extends jspb.Message {
+  getBaseScid(): number;
+  setBaseScid(value: number): void;
+
+  clearAliasesList(): void;
+  getAliasesList(): Array<number>;
+  setAliasesList(value: Array<number>): void;
+  addAliases(value: number, index?: number): number;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): AliasMap.AsObject;
+  static toObject(includeInstance: boolean, msg: AliasMap): AliasMap.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: AliasMap, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AliasMap;
+  static deserializeBinaryFromReader(message: AliasMap, reader: jspb.BinaryReader): AliasMap;
+}
+
+export namespace AliasMap {
+  export type AsObject = {
+    baseScid: number,
+    aliases: Array<number>,
+  }
+}
+
+export class ListAliasesRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListAliasesRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ListAliasesRequest): ListAliasesRequest.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: ListAliasesRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListAliasesRequest;
+  static deserializeBinaryFromReader(message: ListAliasesRequest, reader: jspb.BinaryReader): ListAliasesRequest;
+}
+
+export namespace ListAliasesRequest {
+  export type AsObject = {
+  }
+}
+
+export class ListAliasesResponse extends jspb.Message {
+  clearAliasMapsList(): void;
+  getAliasMapsList(): Array<AliasMap>;
+  setAliasMapsList(value: Array<AliasMap>): void;
+  addAliasMaps(value?: AliasMap, index?: number): AliasMap;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListAliasesResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ListAliasesResponse): ListAliasesResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: ListAliasesResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListAliasesResponse;
+  static deserializeBinaryFromReader(message: ListAliasesResponse, reader: jspb.BinaryReader): ListAliasesResponse;
+}
+
+export namespace ListAliasesResponse {
+  export type AsObject = {
+    aliasMaps: Array<AliasMap.AsObject>,
+  }
+}
+
 export class ChannelCloseSummary extends jspb.Message {
   getChannelPoint(): string;
   setChannelPoint(value: string): void;
@@ -1479,6 +1645,14 @@ export class ChannelCloseSummary extends jspb.Message {
   setResolutionsList(value: Array<Resolution>): void;
   addResolutions(value?: Resolution, index?: number): Resolution;
 
+  clearAliasScidsList(): void;
+  getAliasScidsList(): Array<number>;
+  setAliasScidsList(value: Array<number>): void;
+  addAliasScids(value: number, index?: number): number;
+
+  getZeroConfConfirmedScid(): string;
+  setZeroConfConfirmedScid(value: string): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ChannelCloseSummary.AsObject;
   static toObject(includeInstance: boolean, msg: ChannelCloseSummary): ChannelCloseSummary.AsObject;
@@ -1504,6 +1678,8 @@ export namespace ChannelCloseSummary {
     openInitiator: InitiatorMap[keyof InitiatorMap],
     closeInitiator: InitiatorMap[keyof InitiatorMap],
     resolutions: Array<Resolution.AsObject>,
+    aliasScids: Array<number>,
+    zeroConfConfirmedScid: string,
   }
 
   export interface ClosureTypeMap {
@@ -1889,6 +2065,9 @@ export class GetInfoResponse extends jspb.Message {
 
   getFeaturesMap(): jspb.Map<number, Feature>;
   clearFeaturesMap(): void;
+  getRequireHtlcInterceptor(): boolean;
+  setRequireHtlcInterceptor(value: boolean): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetInfoResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetInfoResponse): GetInfoResponse.AsObject;
@@ -1919,6 +2098,7 @@ export namespace GetInfoResponse {
     chains: Array<Chain.AsObject>,
     uris: Array<string>,
     features: Array<[number, Feature.AsObject]>,
+    requireHtlcInterceptor: boolean,
   }
 }
 
@@ -2089,6 +2269,9 @@ export class CloseChannelRequest extends jspb.Message {
   getSatPerVbyte(): number;
   setSatPerVbyte(value: number): void;
 
+  getMaxFeePerVbyte(): number;
+  setMaxFeePerVbyte(value: number): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CloseChannelRequest.AsObject;
   static toObject(includeInstance: boolean, msg: CloseChannelRequest): CloseChannelRequest.AsObject;
@@ -2107,6 +2290,7 @@ export namespace CloseChannelRequest {
     satPerByte: number,
     deliveryAddress: string,
     satPerVbyte: number,
+    maxFeePerVbyte: number,
   }
 }
 
@@ -2380,6 +2564,12 @@ export class OpenChannelRequest extends jspb.Message {
   getCommitmentType(): CommitmentTypeMap[keyof CommitmentTypeMap];
   setCommitmentType(value: CommitmentTypeMap[keyof CommitmentTypeMap]): void;
 
+  getZeroConf(): boolean;
+  setZeroConf(value: boolean): void;
+
+  getScidAlias(): boolean;
+  setScidAlias(value: boolean): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): OpenChannelRequest.AsObject;
   static toObject(includeInstance: boolean, msg: OpenChannelRequest): OpenChannelRequest.AsObject;
@@ -2410,6 +2600,8 @@ export namespace OpenChannelRequest {
     remoteMaxHtlcs: number,
     maxLocalCsv: number,
     commitmentType: CommitmentTypeMap[keyof CommitmentTypeMap],
+    zeroConf: boolean,
+    scidAlias: boolean,
   }
 }
 
@@ -2911,6 +3103,12 @@ export namespace PendingChannelsResponse {
     getNumForwardingPackages(): number;
     setNumForwardingPackages(value: number): void;
 
+    getChanStatusFlags(): string;
+    setChanStatusFlags(value: string): void;
+
+    getPrivate(): boolean;
+    setPrivate(value: boolean): void;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): PendingChannel.AsObject;
     static toObject(includeInstance: boolean, msg: PendingChannel): PendingChannel.AsObject;
@@ -2933,6 +3131,8 @@ export namespace PendingChannelsResponse {
       initiator: InitiatorMap[keyof InitiatorMap],
       commitmentType: CommitmentTypeMap[keyof CommitmentTypeMap],
       numForwardingPackages: number,
+      chanStatusFlags: string,
+      pb_private: boolean,
     }
   }
 
@@ -2941,9 +3141,6 @@ export namespace PendingChannelsResponse {
     clearChannel(): void;
     getChannel(): PendingChannelsResponse.PendingChannel | undefined;
     setChannel(value?: PendingChannelsResponse.PendingChannel): void;
-
-    getConfirmationHeight(): number;
-    setConfirmationHeight(value: number): void;
 
     getCommitFee(): number;
     setCommitFee(value: number): void;
@@ -2967,7 +3164,6 @@ export namespace PendingChannelsResponse {
   export namespace PendingOpenChannel {
     export type AsObject = {
       channel?: PendingChannelsResponse.PendingChannel.AsObject,
-      confirmationHeight: number,
       commitFee: number,
       commitWeight: number,
       feePerKw: number,
@@ -2988,6 +3184,9 @@ export namespace PendingChannelsResponse {
     getCommitments(): PendingChannelsResponse.Commitments | undefined;
     setCommitments(value?: PendingChannelsResponse.Commitments): void;
 
+    getClosingTxid(): string;
+    setClosingTxid(value: string): void;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): WaitingCloseChannel.AsObject;
     static toObject(includeInstance: boolean, msg: WaitingCloseChannel): WaitingCloseChannel.AsObject;
@@ -3003,6 +3202,7 @@ export namespace PendingChannelsResponse {
       channel?: PendingChannelsResponse.PendingChannel.AsObject,
       limboBalance: number,
       commitments?: PendingChannelsResponse.Commitments.AsObject,
+      closingTxid: string,
     }
   }
 
@@ -3277,6 +3477,12 @@ export class WalletBalanceResponse extends jspb.Message {
   getUnconfirmedBalance(): number;
   setUnconfirmedBalance(value: number): void;
 
+  getLockedBalance(): number;
+  setLockedBalance(value: number): void;
+
+  getReservedBalanceAnchorChan(): number;
+  setReservedBalanceAnchorChan(value: number): void;
+
   getAccountBalanceMap(): jspb.Map<string, WalletAccountBalance>;
   clearAccountBalanceMap(): void;
   serializeBinary(): Uint8Array;
@@ -3294,6 +3500,8 @@ export namespace WalletBalanceResponse {
     totalBalance: number,
     confirmedBalance: number,
     unconfirmedBalance: number,
+    lockedBalance: number,
+    reservedBalanceAnchorChan: number,
     accountBalance: Array<[string, WalletAccountBalance.AsObject]>,
   }
 }
@@ -3462,6 +3670,9 @@ export class QueryRoutesRequest extends jspb.Message {
   setDestFeaturesList(value: Array<FeatureBitMap[keyof FeatureBitMap]>): void;
   addDestFeatures(value: FeatureBitMap[keyof FeatureBitMap], index?: number): FeatureBitMap[keyof FeatureBitMap];
 
+  getTimePref(): number;
+  setTimePref(value: number): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): QueryRoutesRequest.AsObject;
   static toObject(includeInstance: boolean, msg: QueryRoutesRequest): QueryRoutesRequest.AsObject;
@@ -3490,6 +3701,7 @@ export namespace QueryRoutesRequest {
     lastHopPubkey: Uint8Array | string,
     routeHints: Array<RouteHint.AsObject>,
     destFeatures: Array<FeatureBitMap[keyof FeatureBitMap]>,
+    timePref: number,
   }
 }
 
@@ -3611,6 +3823,11 @@ export class Hop extends jspb.Message {
 
   getCustomRecordsMap(): jspb.Map<number, Uint8Array | string>;
   clearCustomRecordsMap(): void;
+  getMetadata(): Uint8Array | string;
+  getMetadata_asU8(): Uint8Array;
+  getMetadata_asB64(): string;
+  setMetadata(value: Uint8Array | string): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Hop.AsObject;
   static toObject(includeInstance: boolean, msg: Hop): Hop.AsObject;
@@ -3635,6 +3852,7 @@ export namespace Hop {
     mppRecord?: MPPRecord.AsObject,
     ampRecord?: AMPRecord.AsObject,
     customRecords: Array<[number, Uint8Array | string]>,
+    metadata: Uint8Array | string,
   }
 }
 
@@ -5043,6 +5261,9 @@ export class ListPaymentsRequest extends jspb.Message {
   getReversed(): boolean;
   setReversed(value: boolean): void;
 
+  getCountTotalPayments(): boolean;
+  setCountTotalPayments(value: boolean): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ListPaymentsRequest.AsObject;
   static toObject(includeInstance: boolean, msg: ListPaymentsRequest): ListPaymentsRequest.AsObject;
@@ -5059,6 +5280,7 @@ export namespace ListPaymentsRequest {
     indexOffset: number,
     maxPayments: number,
     reversed: boolean,
+    countTotalPayments: boolean,
   }
 }
 
@@ -5073,6 +5295,9 @@ export class ListPaymentsResponse extends jspb.Message {
 
   getLastIndexOffset(): number;
   setLastIndexOffset(value: number): void;
+
+  getTotalNumPayments(): number;
+  setTotalNumPayments(value: number): void;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ListPaymentsResponse.AsObject;
@@ -5089,6 +5314,7 @@ export namespace ListPaymentsResponse {
     payments: Array<Payment.AsObject>,
     firstIndexOffset: number,
     lastIndexOffset: number,
+    totalNumPayments: number,
   }
 }
 
@@ -5486,6 +5712,9 @@ export class PolicyUpdateRequest extends jspb.Message {
   getFeeRate(): number;
   setFeeRate(value: number): void;
 
+  getFeeRatePpm(): number;
+  setFeeRatePpm(value: number): void;
+
   getTimeLockDelta(): number;
   setTimeLockDelta(value: number): void;
 
@@ -5515,6 +5744,7 @@ export namespace PolicyUpdateRequest {
     chanPoint?: ChannelPoint.AsObject,
     baseFeeMsat: number,
     feeRate: number,
+    feeRatePpm: number,
     timeLockDelta: number,
     maxHtlcMsat: number,
     minHtlcMsat: number,
@@ -6426,6 +6656,11 @@ export class RPCMiddlewareRequest extends jspb.Message {
   getResponse(): RPCMessage | undefined;
   setResponse(value?: RPCMessage): void;
 
+  hasRegComplete(): boolean;
+  clearRegComplete(): void;
+  getRegComplete(): boolean;
+  setRegComplete(value: boolean): void;
+
   getMsgId(): number;
   setMsgId(value: number): void;
 
@@ -6448,6 +6683,7 @@ export namespace RPCMiddlewareRequest {
     streamAuth?: StreamAuth.AsObject,
     request?: RPCMessage.AsObject,
     response?: RPCMessage.AsObject,
+    regComplete: boolean,
     msgId: number,
   }
 
@@ -6456,6 +6692,7 @@ export namespace RPCMiddlewareRequest {
     STREAM_AUTH = 4,
     REQUEST = 5,
     RESPONSE = 6,
+    REG_COMPLETE = 8,
   }
 }
 
@@ -6494,6 +6731,9 @@ export class RPCMessage extends jspb.Message {
   getSerialized_asB64(): string;
   setSerialized(value: Uint8Array | string): void;
 
+  getIsError(): boolean;
+  setIsError(value: boolean): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RPCMessage.AsObject;
   static toObject(includeInstance: boolean, msg: RPCMessage): RPCMessage.AsObject;
@@ -6510,6 +6750,7 @@ export namespace RPCMessage {
     streamRpc: boolean,
     typeName: string,
     serialized: Uint8Array | string,
+    isError: boolean,
   }
 }
 
@@ -6610,11 +6851,27 @@ export namespace InterceptFeedback {
   }
 }
 
+export interface OutputScriptTypeMap {
+  SCRIPT_TYPE_PUBKEY_HASH: 0;
+  SCRIPT_TYPE_SCRIPT_HASH: 1;
+  SCRIPT_TYPE_WITNESS_V0_PUBKEY_HASH: 2;
+  SCRIPT_TYPE_WITNESS_V0_SCRIPT_HASH: 3;
+  SCRIPT_TYPE_PUBKEY: 4;
+  SCRIPT_TYPE_MULTISIG: 5;
+  SCRIPT_TYPE_NULLDATA: 6;
+  SCRIPT_TYPE_NON_STANDARD: 7;
+  SCRIPT_TYPE_WITNESS_UNKNOWN: 8;
+}
+
+export const OutputScriptType: OutputScriptTypeMap;
+
 export interface AddressTypeMap {
   WITNESS_PUBKEY_HASH: 0;
   NESTED_PUBKEY_HASH: 1;
   UNUSED_WITNESS_PUBKEY_HASH: 2;
   UNUSED_NESTED_PUBKEY_HASH: 3;
+  TAPROOT_PUBKEY: 4;
+  UNUSED_TAPROOT_PUBKEY: 5;
 }
 
 export const AddressType: AddressTypeMap;

@@ -1,11 +1,11 @@
 {
   "name": "@lily-technologies/lnrpc",
-  "version": "0.14.1-beta.12",
+  "version": "0.15.4-beta",
   "description": "A Typescript gRPC client for LND with support for all LND sub-servers",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "config": {
-    "releasetag": "v0.14.1-beta",
+    "releasetag": "v0.15.4-beta",
     "url": "https://raw.githubusercontent.com/lightningnetwork/lnd",
     "protocversion": "3.19.3"
   },

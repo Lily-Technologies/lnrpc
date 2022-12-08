@@ -15,6 +15,9 @@ export class ListUnspentRequest extends jspb.Message {
   getAccount(): string;
   setAccount(value: string): void;
 
+  getUnconfirmedOnly(): boolean;
+  setUnconfirmedOnly(value: boolean): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ListUnspentRequest.AsObject;
   static toObject(includeInstance: boolean, msg: ListUnspentRequest): ListUnspentRequest.AsObject;
@@ -30,6 +33,7 @@ export namespace ListUnspentRequest {
     minConfs: number,
     maxConfs: number,
     account: string,
+    unconfirmedOnly: boolean,
   }
 }
 
@@ -316,6 +320,46 @@ export class ListAccountsResponse extends jspb.Message {
 export namespace ListAccountsResponse {
   export type AsObject = {
     accounts: Array<Account.AsObject>,
+  }
+}
+
+export class RequiredReserveRequest extends jspb.Message {
+  getAdditionalPublicChannels(): number;
+  setAdditionalPublicChannels(value: number): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RequiredReserveRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: RequiredReserveRequest): RequiredReserveRequest.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: RequiredReserveRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RequiredReserveRequest;
+  static deserializeBinaryFromReader(message: RequiredReserveRequest, reader: jspb.BinaryReader): RequiredReserveRequest;
+}
+
+export namespace RequiredReserveRequest {
+  export type AsObject = {
+    additionalPublicChannels: number,
+  }
+}
+
+export class RequiredReserveResponse extends jspb.Message {
+  getRequiredReserve(): number;
+  setRequiredReserve(value: number): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RequiredReserveResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: RequiredReserveResponse): RequiredReserveResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: RequiredReserveResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RequiredReserveResponse;
+  static deserializeBinaryFromReader(message: RequiredReserveResponse, reader: jspb.BinaryReader): RequiredReserveResponse;
+}
+
+export namespace RequiredReserveResponse {
+  export type AsObject = {
+    requiredReserve: number,
   }
 }
 
@@ -995,6 +1039,14 @@ export class UtxoLease extends jspb.Message {
   getExpiration(): number;
   setExpiration(value: number): void;
 
+  getPkScript(): Uint8Array | string;
+  getPkScript_asU8(): Uint8Array;
+  getPkScript_asB64(): string;
+  setPkScript(value: Uint8Array | string): void;
+
+  getValue(): number;
+  setValue(value: number): void;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UtxoLease.AsObject;
   static toObject(includeInstance: boolean, msg: UtxoLease): UtxoLease.AsObject;
@@ -1010,6 +1062,52 @@ export namespace UtxoLease {
     id: Uint8Array | string,
     outpoint?: lightning_pb.OutPoint.AsObject,
     expiration: number,
+    pkScript: Uint8Array | string,
+    value: number,
+  }
+}
+
+export class SignPsbtRequest extends jspb.Message {
+  getFundedPsbt(): Uint8Array | string;
+  getFundedPsbt_asU8(): Uint8Array;
+  getFundedPsbt_asB64(): string;
+  setFundedPsbt(value: Uint8Array | string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SignPsbtRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: SignPsbtRequest): SignPsbtRequest.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: SignPsbtRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SignPsbtRequest;
+  static deserializeBinaryFromReader(message: SignPsbtRequest, reader: jspb.BinaryReader): SignPsbtRequest;
+}
+
+export namespace SignPsbtRequest {
+  export type AsObject = {
+    fundedPsbt: Uint8Array | string,
+  }
+}
+
+export class SignPsbtResponse extends jspb.Message {
+  getSignedPsbt(): Uint8Array | string;
+  getSignedPsbt_asU8(): Uint8Array;
+  getSignedPsbt_asB64(): string;
+  setSignedPsbt(value: Uint8Array | string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SignPsbtResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: SignPsbtResponse): SignPsbtResponse.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: SignPsbtResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SignPsbtResponse;
+  static deserializeBinaryFromReader(message: SignPsbtResponse, reader: jspb.BinaryReader): SignPsbtResponse;
+}
+
+export namespace SignPsbtResponse {
+  export type AsObject = {
+    signedPsbt: Uint8Array | string,
   }
 }
 
@@ -1110,6 +1208,7 @@ export interface AddressTypeMap {
   WITNESS_PUBKEY_HASH: 1;
   NESTED_WITNESS_PUBKEY_HASH: 2;
   HYBRID_NESTED_WITNESS_PUBKEY_HASH: 3;
+  TAPROOT_PUBKEY: 4;
 }
 
 export const AddressType: AddressTypeMap;
